@@ -10,9 +10,17 @@ import { withUrqlClient } from "next-urql";
 import React, { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
 import { createUrqlClient } from "../../utils/createUrqlClient";
+import { UnControlled as CodeMirror } from "react-codemirror2";
 
-const endpoint = "http://localhost:3000";
-const socket = socketIOClient(endpoint);
+if (typeof navigator !== "undefined") {
+  require("codemirror/mode/clike/clike");
+  require("codemirror/addon/edit/matchbrackets");
+  require("codemirror/addon/search/match-highlighter");
+  require("codemirror/addon/hint/show-hint");
+  require("codemirror/addon/display/fullscreen");
+  require("codemirror/addon/edit/closebrackets");
+  require("codemirror/mode/javascript/javascript");
+}
 
 export const Code: NextPage = () => {
   const [edit, setEdit] = useState(false);
@@ -29,9 +37,9 @@ export const Code: NextPage = () => {
   useEffect(() => {
     if (edit) return;
 
-    socket.on("connection:sid", function (socketId: string) {
-      setSocketId(socketId);
-    });
+    // socket.on("connection:sid", function (socketId: string) {
+    //   setSocketId(socketId);
+    // });
 
     const state = EditorState.create({
       doc: doc,
@@ -45,13 +53,13 @@ export const Code: NextPage = () => {
       ],
     });
 
-    let editorview = new EditorView({
-      state,
-      parent: document.querySelector("#editor") as Element,
-    });
+    // let editorview = new EditorView({
+    //   state,
+    //   parent: document.querySelector("#editor") as Element,
+    // });
 
-    setViewd(editorview);
-
+    // setViewd(editorview);
+    // viewd.state.create({ doc: "123" });
     setEdit(true);
   }, []);
 
@@ -63,7 +71,7 @@ export const Code: NextPage = () => {
 
   const run = () => {
     // runCode();
-    console.log(viewd);
+    console.log(viewd.viewState?.state);
   };
 
   const drawRect = (rect) => {
@@ -197,7 +205,26 @@ export const Code: NextPage = () => {
       </div>
       <div style={{ margin: "20px" }}>
         <p style={{ fontSize: "18px" }}>Code:</p>
-        <div style={{ outline: "none" }} id="editor"></div>
+        <div style={{ outline: "none" }} id="editor">
+          <CodeMirror
+            value="<h1>I ♥ react-codemirror2</h1>"
+            options={{
+              fullscreen: true,
+              mode: "text/x-java",
+              autocompletion: true,
+              highlightSelectionMatches: true,
+              styleActiveLine: true,
+              autoCloseTags: true,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              theme: "dracula",
+              lineNumbers: true,
+            }}
+            onChange={(editor, data, value) => {
+              console.log(value);
+            }}
+          />
+        </div>
       </div>
       <div style={{ margin: "20px" }}>
         <p style={{ fontSize: "18px" }}>Output:</p>
