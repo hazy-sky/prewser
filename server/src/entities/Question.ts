@@ -1,4 +1,4 @@
-import { Question, SurveySharedUser, User } from '.';
+import { Survey, SurveySharedUser, User } from '.';
 import { PrivacyTypes } from "../enums";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
@@ -14,10 +14,12 @@ import {
   OneToMany,
 } from "typeorm";
 import SurveyShare from './SurveyShare';
+import QuestionType from './QuestionType';
+import Answer from './Answer';
 
 @ObjectType()
-@Entity({ name: 'surveys' })
-class Survey extends BaseEntity {
+@Entity({ name: 'questions' })
+class Question extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
@@ -26,14 +28,27 @@ class Survey extends BaseEntity {
   title!: string;
 
   @Column()
-  description: string;
+  answer_schema: string;
 
   @Column()
-  user_id: number;
+  is_main: boolean;
 
-  @ManyToOne(() => User, user => user.surveys)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @Column()
+  order: number;
+
+  @Column()
+  survey_id: number;
+
+  @ManyToOne(() => Survey, survey => survey.questions)
+  @JoinColumn({ name: 'survey_id' })
+  survey: Survey;
+
+  @Column()
+  type_id: number;
+
+  @ManyToOne(() => QuestionType, questionType => questionType.questions)
+  @JoinColumn({ name: 'type_id' })
+  type: QuestionType;
 
   @Column()
   privacy_type: PrivacyTypes;
@@ -46,9 +61,9 @@ class Survey extends BaseEntity {
 
   @OneToOne(() => SurveySharedUser, sharedUser => sharedUser.survey)
   sharedUsers: SurveySharedUser;
-
-  @OneToMany(() => Question, question => question.survey)
-  questions: Question[];
+  
+  @OneToMany(() => Answer, answer => answer.question)
+  answers: Answer[];
 
   @Field(() => String)
   @CreateDateColumn()
@@ -59,4 +74,4 @@ class Survey extends BaseEntity {
   updatedAt: Date;
 }
 
-export default Survey;
+export default Question;

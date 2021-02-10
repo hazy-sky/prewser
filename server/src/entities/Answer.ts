@@ -6,35 +6,30 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
-import { Survey, SurveySharedUser } from ".";
+import { Question } from ".";
 
 @ObjectType()
-@Entity({ name: 'users' })
-class User extends BaseEntity {
+@Entity({ name: 'answers' })
+class Answer extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Field()
   @Column({ unique: true })
-  email!: string;
+  answer!: string;
 
   @Column()
-  first_name!: string;
+  text: string;
 
   @Column()
-  last_name!: string;
+  question_id: number;
 
-  @Column()
-  password!: string;
-
-  @OneToMany(() => Survey, survey => survey.user)
-  surveys: Survey[];
-
-  @OneToMany(() => SurveySharedUser, surveyShare => surveyShare.user)
-  surveyShares: SurveySharedUser[];
+  @ManyToOne(() => Question, question => question.answers)
+  @JoinColumn({ name: 'question_id' })
+  question: Question;
 
   @Field(() => String)
   @CreateDateColumn()
@@ -45,4 +40,4 @@ class User extends BaseEntity {
   updatedAt: Date;
 }
 
-export default User;
+export default Answer;
