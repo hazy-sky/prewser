@@ -15,6 +15,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 if (typeof navigator !== "undefined") {
   require("codemirror/mode/clike/clike");
   require("codemirror/addon/edit/matchbrackets");
+  require("codemirror/addon/display/panel");
   require("codemirror/addon/search/match-highlighter");
   require("codemirror/addon/hint/show-hint");
   require("codemirror/addon/display/fullscreen");
@@ -33,108 +34,17 @@ export const Code: NextPage = () => {
   const [containerId, setContainerId] = useState("");
   const [language, setLanguage] = useState("java");
   const canvas = useRef();
+  let instance: any = null;
 
   useEffect(() => {
     if (edit) return;
 
-    // socket.on("connection:sid", function (socketId: string) {
-    //   setSocketId(socketId);
-    // });
-
-    const state = EditorState.create({
-      doc: doc,
-      extensions: [
-        basicSetup,
-        python(),
-        oneDark,
-        autocompletion(),
-        tooltips(),
-        rectangularSelection(),
-      ],
-    });
-
-    // let editorview = new EditorView({
-    //   state,
-    //   parent: document.querySelector("#editor") as Element,
-    // });
-
-    // setViewd(editorview);
-    // viewd.state.create({ doc: "123" });
     setEdit(true);
   }, []);
-
-  let code = `public class main {
-    public static void main(String[] args) {
-      System.out.println("Hello world..!!!");
-    }
-  }`;
 
   const run = () => {
     // runCode();
     console.log(viewd.viewState?.state);
-  };
-
-  const drawRect = (rect) => {
-    let image = new Image();
-    image.width = rect.width;
-    image.height = rect.height;
-    image.src = "data:image/png;base64," + rect.image;
-    image.onload = () => {
-      canvas.current.drawImage(rect.x, rect.y, rect.width, rect.height);
-    };
-  };
-
-  const addMouseHandler = (cb) => {
-    let state = 0;
-    canvas.current.addEventListener(
-      "mousedown",
-      (e) => {
-        state = 1;
-        cb.call(null, e.pageX, e.pageY, state);
-        e.preventDefault();
-      },
-      false
-    );
-    canvas.current.addEventListener(
-      "mouseup",
-      (e) => {
-        state = 0;
-        cb.call(null, e.pageX, e.pageY, state);
-        e.preventDefault();
-      },
-      false
-    );
-    canvas.current.addEventListener("mousemove", (e) => {
-      cb.call(null, e.pageX, e.pageY, state);
-      e.preventDefault();
-    });
-  };
-
-  const addKeyboardHandlers = (cb) => {
-    document.addEventListener(
-      "keydown",
-      (this._onkeydown = function (e) {
-        cb.call(null, e.keyCode, e.shiftKey, 1);
-        e.preventDefault();
-      }),
-      false
-    );
-    document.addEventListener(
-      "keyup",
-      (this._onkeyup = function (e) {
-        cb.call(null, e.keyCode, e.shiftKey, 0);
-        e.preventDefault();
-      }),
-      false
-    );
-  };
-
-  const removeHandlers = () => {
-    document.removeEventListener("keydown", this._onkeydown);
-    document.removeEventListener("keyup", this._onkeyup);
-    canvas.removeEventListener("mouseup", this._onmouseup);
-    canvas.removeEventListener("mousedown", this._onmousedown);
-    canvas.removeEventListener("mousemove", this._onmousemove);
   };
 
   const runCode = () => {
@@ -193,7 +103,7 @@ export const Code: NextPage = () => {
 
   return (
     <div className="App">
-      <div className="run-cont">
+      {/* <div className="run-cont">
         <Button
           isLoading={isLoading}
           colorScheme={running ? "red" : "green"}
@@ -202,12 +112,16 @@ export const Code: NextPage = () => {
         >
           {running ? "Stop" : "Run"}
         </Button>
-      </div>
-      <div style={{ margin: "20px" }}>
-        <p style={{ fontSize: "18px" }}>Code:</p>
-        <div style={{ outline: "none" }} id="editor">
+      </div> */}
+      <div
+        style={{
+          display: "inline-flex",
+          width: "100%",
+        }}
+      >
+        <div id="editor" style={{ width: "calc(50%)" }}>
           <CodeMirror
-            value="<h1>I ♥ react-codemirror2</h1>"
+            value='System.out.println("Hello, World!"); '
             options={{
               fullscreen: true,
               mode: "text/x-java",
@@ -223,24 +137,26 @@ export const Code: NextPage = () => {
             onChange={(editor, data, value) => {
               console.log(value);
             }}
+            editorDidMount={(editor) => {
+              instance = editor;
+            }}
           />
         </div>
-      </div>
-      <div style={{ margin: "20px" }}>
-        <p style={{ fontSize: "18px" }}>Output:</p>
-        <div
-          style={{
-            padding: "20px",
-            color: "white",
-            border: "none",
-            backgroundColor: "#2c313a",
-          }}
-        >
-          <p>{output}</p>
+        <div style={{ width: "calc(50%) " }}>
+          <div
+            style={{
+              padding: "20px",
+              color: "white",
+              border: "none",
+              backgroundColor: "#2c313a",
+            }}
+          >
+            <p>{output}</p>
+          </div>
         </div>
-        <Checkbox style={{ margin: "20px" }}>Uses Graphics</Checkbox>
       </div>
-      <canvas
+
+      {/* <canvas
         ref={canvas}
         style={{
           margin: "20px",
@@ -248,7 +164,7 @@ export const Code: NextPage = () => {
           width: "400px",
           height: "400px",
         }}
-      ></canvas>
+      ></canvas> */}
     </div>
   );
 };
