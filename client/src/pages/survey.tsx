@@ -7,9 +7,6 @@ import { useCreatePostMutation } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Dashboard: React.FC<{}> = ({}) => {
-  const router = useRouter();
-  const [, createPost] = useCreatePostMutation();
-
   return (
     <Block
       marginTop="8%"

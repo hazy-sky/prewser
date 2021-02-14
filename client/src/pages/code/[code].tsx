@@ -26,15 +26,10 @@ if (typeof navigator !== "undefined") {
 export const Code: NextPage = () => {
   const [edit, setEdit] = useState(false);
   const [output, setOutput] = useState(``);
-  const [doc, setDoc] = useState("");
   const [viewd, setViewd] = useState<any>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [socketId, setSocketId] = useState("");
-  const [running, setRunning] = useState(false);
-  const [containerId, setContainerId] = useState("");
-  const [language, setLanguage] = useState("java");
-  const canvas = useRef();
-  let instance: any = null;
+  const [, setIsLoading] = useState(false);
+  const [socketId] = useState("");
+  const [, setRunning] = useState(false);
 
   useEffect(() => {
     if (edit) return;
@@ -42,37 +37,32 @@ export const Code: NextPage = () => {
     setEdit(true);
   }, []);
 
-  const run = () => {
-    // runCode();
-    console.log(viewd.viewState?.state);
-  };
+  // const runCode = () => {
+  //   setIsLoading(true);
+  //   setRunning(true);
+  //   let javaCode = viewd.viewState.state.doc.text;
+  //   axios
+  //     .post("http://localhost:3000/session", {
+  //       sessid: "asasdfsdfff",
+  //       code: javaCode,
+  //       socketId: socketId,
+  //       language: "Python",
+  //       languageExt: "py",
+  //     })
+  //     .then((res) => {
+  //       if (res.data === "done") {
+  //         setRunning(false);
+  //       }
+  //       setIsLoading(false);
+  //     });
 
-  const runCode = () => {
-    setIsLoading(true);
-    setRunning(true);
-    let javaCode = viewd.viewState.state.doc.text;
-    axios
-      .post("http://localhost:3000/session", {
-        sessid: "asasdfsdfff",
-        code: javaCode,
-        socketId: socketId,
-        language: "Python",
-        languageExt: "py",
-      })
-      .then((res) => {
-        if (res.data === "done") {
-          setRunning(false);
-        }
-        setIsLoading(false);
-      });
-
-    setOutput("");
-    let outputs = [""];
-    socket.on("output", (msg) => {
-      setIsLoading(false);
-      outputs.push(msg);
-      setTimeout(() => setOutput(output + outputs.join("")), 100);
-    });
+  //   setOutput("");
+  //   let outputs = [""];
+  //   socket.on("output", (msg) => {
+  //     setIsLoading(false);
+  //     outputs.push(msg);
+  //     setTimeout(() => setOutput(output + outputs.join("")), 100);
+  //   });
 
     // socket.emit("init", {
     //   host: "localhost",
