@@ -5535,6 +5535,11 @@ react-focus-lock@^2.2.1:
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
 
+react-gradient@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-gradient/-/react-gradient-1.0.2.tgz#eab261cfd36b3dc3fb659c4438e12a27bea1f3bd"
+  integrity sha512-0SWuauujHh0R0Q+AaogUm/t0pAblzJVW5BYoYbJ4Kh8rCEb4EomsEK8X2QiR1UXR7iOiiqRuJZixTrKeMaFuSQ==
+
 react-highlight@^0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/react-highlight/-/react-highlight-0.13.0.tgz#3331d47fe45a3db0cdcca2e5b479ed81b117ac20"

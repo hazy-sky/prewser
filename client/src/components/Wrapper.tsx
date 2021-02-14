@@ -14,9 +14,10 @@ export const Wrapper: React.FC<WrapperProps> = ({
       width="40%"
       display="flex"
       flexDirection="column"
+      text-align="center"
       justifyContent="center"
       margin="0 auto"
-      marginTop="15%"
+      marginTop="12%"
     >
       {children}
     </Block>

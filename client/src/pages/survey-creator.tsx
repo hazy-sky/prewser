@@ -6,7 +6,7 @@ import { FormControl } from "baseui/form-control";
 import { ChevronDown, ChevronRight, Plus } from "baseui/icon";
 import { Input, InputProps } from "baseui/input";
 import { StyledLink } from "baseui/link";
-import { StatefulMenu } from "baseui/menu";
+import { NestedMenus, StatefulMenu } from "baseui/menu";
 import { PLACEMENT, StatefulPopover } from "baseui/popover";
 import { Tab, Tabs } from "baseui/tabs";
 import {
@@ -223,53 +223,58 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           focusLock
           placement={PLACEMENT.bottomRight}
           content={({ close }) => (
-            <StatefulMenu
-              items={[{ label: "Add page" }, { label: "Add component" }]}
-              onItemSelect={async (item) => {
-                if (item.item.label === "Add page") {
-                  setSurveyState([
-                    ...surveyState,
-                    { name: "page " + currentPage + 1, components: [] },
-                  ]);
-                  setCurrentPage(currentPage + 1);
-                }
-              }}
-              overrides={{
-                List: { style: { height: "72px", width: "138px" } },
-                Option: {
-                  props: {
-                    getChildMenu: (item: { label: string }) => {
-                      if (item.label === "Add component") {
-                        return (
-                          <StatefulMenu
-                            items={availableComps}
-                            onItemSelect={async (item) => {
-                              await setSurveyState([
-                                ...surveyState.slice(0, currentPage),
-                                {
-                                  ...surveyState[currentPage],
-                                  components: [
-                                    ...surveyState[currentPage].components,
-                                    JSON.stringify({
-                                      type: item.item.label,
-                                      label: "Label",
-                                      default: "",
-                                      extra: "",
-                                      selected: false,
-                                    }),
-                                  ],
-                                },
-                                ...surveyState.slice(currentPage + 1),
-                              ]);
-                            }}
-                          />
-                        );
-                      }
+            <NestedMenus>
+              <StatefulMenu
+                items={[{ label: "Add page" }, { label: "Add component" }]}
+                onItemSelect={async (item) => {
+                  if (item.item.label === "Add page") {
+                    setSurveyState([
+                      ...surveyState,
+                      { name: "page " + currentPage + 1, components: [] },
+                    ]);
+                    setCurrentPage(currentPage + 1);
+                  }
+                }}
+                overrides={{
+                  List: {
+                    style: { height: "72px", width: "138px", overflow: "auto" },
+                  },
+                  Option: {
+                    props: {
+                      getChildMenu: (item: { label: string }) => {
+                        if (item.label === "Add component") {
+                          return (
+                            <StatefulMenu
+                              items={availableComps}
+                              onItemSelect={async (item) => {
+                                await setSurveyState([
+                                  ...surveyState.slice(0, currentPage),
+                                  {
+                                    ...surveyState[currentPage],
+                                    components: [
+                                      ...surveyState[currentPage].components,
+                                      JSON.stringify({
+                                        type: item.item.label,
+                                        label: "Label",
+                                        default: "",
+                                        extra: "",
+                                        selected: false,
+                                      }),
+                                    ],
+                                  },
+                                  ...surveyState.slice(currentPage + 1),
+                                ]);
+                              }}
+                            />
+                          );
+                        }
+                        return null;
+                      },
                     },
                   },
-                },
-              }}
-            />
+                }}
+              />
+            </NestedMenus>
           )}
         >
           <Block>

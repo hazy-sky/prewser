@@ -39,7 +39,9 @@ export const Login: React.FC<{}> = ({}) => {
               <InputField name="usernameOrEmail" label="Username or Email" />
               <InputField name="password" label="Password" type="password" />
               <NextLink href="/forgot-password">
-                <StyledLink>Go here to reset it again</StyledLink>
+                <StyledLink $style={{ marginTop: "0", display: "block" }}>
+                  Reset Password
+                </StyledLink>
               </NextLink>
               <Button
                 $style={{ marginTop: "20px" }}
