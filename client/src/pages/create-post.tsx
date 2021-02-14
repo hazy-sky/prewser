@@ -1,3 +1,4 @@
+import { Button } from "baseui/button";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
@@ -25,17 +26,9 @@ const CreatePost: React.FC<{}> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField name="title" label="Title" />
-            <Box mt={4}>
-              <InputField textarea name="text" label="Body" />
-            </Box>
+            <InputField textarea name="text" label="Body" />
 
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              variant="solid"
-              colorScheme="teal"
-            >
+            <Button type="submit" isLoading={isSubmitting}>
               Create Post
             </Button>
           </Form>

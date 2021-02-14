@@ -37,14 +37,10 @@ export const Login: React.FC<{}> = ({}) => {
           {({ isSubmitting }) => (
             <Form>
               <InputField name="usernameOrEmail" label="Username or Email" />
-              <Box mt={4}>
-                <InputField name="password" label="Password" type="password" />
-              </Box>
-              <Flex mt={3}>
-                <NextLink href="/forgot-password">
-                  <StyledLink>Go here to reset it again</StyledLink>
-                </NextLink>
-              </Flex>
+              <InputField name="password" label="Password" type="password" />
+              <NextLink href="/forgot-password">
+                <StyledLink>Go here to reset it again</StyledLink>
+              </NextLink>
               <Button
                 $style={{ marginTop: "20px" }}
                 type="submit"
