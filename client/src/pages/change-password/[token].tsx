@@ -42,7 +42,6 @@ export const ChangePassword: NextPage = () => {
             <Box mt={4}>
               <InputField
                 name="newPassword"
-                placeholder="New Password"
                 label="New Password"
                 type="password"
               />
