@@ -1,23 +1,22 @@
+import { Block } from "baseui/block";
+import { H1 } from "baseui/typography";
 import React from "react";
-import { Box } from "@chakra-ui/react";
-import { useNode } from "@craftjs/node";
 
-interface PlainTextProps {
-  varient?: "small" | "regular";
-}
+export const PlainText = ({ label }) => {
+  // const {
+  //   connectors: { drag },
+  // } = useNode();
 
-export const PlainText: React.FC<PlainTextProps> = ({
-  children,
-  varient = "regular",
-}) => {
   return (
-    <Box
-      maxW={varient === "regular" ? "800px" : "400px"}
-      w="100%"
-      mt={10}
-      mx="auto"
+    <Block
+      width="70%"
+      // ref={drag}
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      margin="0 auto"
     >
-      {children}
-    </Box>
+      <H1>{label}</H1>
+    </Block>
   );
 };

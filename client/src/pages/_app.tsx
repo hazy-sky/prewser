@@ -1,19 +1,16 @@
-import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
-import theme from "../theme";
+import { Provider as StyletronProvider } from "styletron-react";
+import { styletron } from "../styletron";
+import { LightTheme, BaseProvider, styled, DarkTheme } from "baseui";
+
 import "./code.css";
 
 function MyApp({ Component, pageProps }: any) {
   return (
-    <ChakraProvider resetCSS theme={theme}>
-      <ColorModeProvider
-        options={{
-          initialColorMode: "dark",
-          useSystemColorMode: false,
-        }}
-      >
+    <StyletronProvider value={styletron}>
+      <BaseProvider theme={LightTheme}>
         <Component {...pageProps} />
-      </ColorModeProvider>
-    </ChakraProvider>
+      </BaseProvider>
+    </StyletronProvider>
   );
 }
 

@@ -1,8 +1,9 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
+import { Block } from "baseui/block";
 
 interface WrapperProps {
-  varient?: "small" | "regular";
+  varient?: "small" | "regular" | "home";
 }
 
 export const Wrapper: React.FC<WrapperProps> = ({
@@ -10,13 +11,15 @@ export const Wrapper: React.FC<WrapperProps> = ({
   varient = "regular",
 }) => {
   return (
-    <Box
-      maxW={varient === "regular" ? "800px" : "400px"}
-      w="100%"
-      mt={10}
-      mx="auto"
+    <Block
+      width="40%"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      margin="0 auto"
+      marginTop="15%"
     >
       {children}
-    </Box>
+    </Block>
   );
 };

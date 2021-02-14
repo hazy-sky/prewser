@@ -1,23 +1,49 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
-import { useNode } from "@craftjs/node";
+import { Input, Text, Textarea, Stack } from "@chakra-ui/react";
+import { RadioGroup, Radio, ALIGN } from "baseui/radio";
+import {
+  Label1,
+  Label2,
+  Label3,
+  Label4,
+  Paragraph1,
+  Paragraph2,
+  Paragraph3,
+  Paragraph4,
+} from "baseui/typography";
+import { Block } from "baseui/block";
+import { Navigation } from "baseui/side-navigation";
+import { Canvas, useNode } from "@craftjs/core";
 
-interface MultipleChoiceProps {
-  varient?: "small" | "regular";
-}
+export const MultipleChoice = ({ label }) => {
+  const [value, setValue] = React.useState("2");
+  // const {
+  //   connectors: { drag },
+  // } = useNode();
 
-export const MultipleChoice: React.FC<MultipleChoiceProps> = ({
-  children,
-  varient = "regular",
-}) => {
   return (
-    <Box
-      maxW={varient === "regular" ? "800px" : "400px"}
-      w="100%"
-      mt={10}
-      mx="auto"
+    <Block
+      id="drop_section"
+      width="70%"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      margin="0 auto"
     >
-      {children}
-    </Box>
+      <Label3 style={{ marginBottom: "10px" }}>{label}</Label3>
+      <RadioGroup
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        name="number"
+        align={ALIGN.vertical}
+      >
+        <Radio value="1">One</Radio>
+        <Radio value="2" description="This is a radio description">
+          Two
+        </Radio>
+        <Radio value="3">Three</Radio>
+      </RadioGroup>
+    </Block>
   );
 };

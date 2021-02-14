@@ -1,4 +1,4 @@
-import { Wrap } from "@chakra-ui/react";
+// import { Wrap } from "@chakra-ui/react";
 import { NavBar } from "./NavBar";
 import { Wrapper } from "./Wrapper";
 

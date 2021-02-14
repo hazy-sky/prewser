@@ -1,23 +1,62 @@
-import React from "react";
-import { Box } from "@chakra-ui/react";
-import { useNode } from "@craftjs/node";
+import { useStyletron } from "baseui";
+import { Block } from "baseui/block";
+import { FormControl } from "baseui/form-control";
+import { Alert } from "baseui/icon";
+import { Input } from "baseui/input";
+import { validate as validateEmail } from "email-validator"; // add this package to your repo: `$ yarn add email-validator`
+import * as React from "react";
 
-interface EmailProps {
-  varient?: "small" | "regular";
-}
-
-export const Email: React.FC<EmailProps> = ({
-  children,
-  varient = "regular",
-}) => {
+function Negative() {
+  const [css, theme] = useStyletron();
   return (
-    <Box
-      maxW={varient === "regular" ? "800px" : "400px"}
-      w="100%"
-      mt={10}
-      mx="auto"
+    <div
+      className={css({
+        display: "flex",
+        alignItems: "center",
+        paddingRight: theme.sizing.scale500,
+        color: theme.colors.negative400,
+      })}
     >
-      {children}
-    </Box>
+      <Alert size="18px" />
+    </div>
+  );
+}
+export const Email = ({ label, defaults }) => {
+  // const {
+  //   connectors: { drag },
+  // } = useNode();
+
+  const [value, setValue] = React.useState<any>(defaults);
+  const [isValid, setIsValid] = React.useState(false);
+  const [isVisited, setIsVisited] = React.useState(false);
+  const shouldShowError = !isValid && isVisited;
+  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    setIsValid(validateEmail(value));
+    setValue(value);
+  };
+  return (
+    <Block
+      // ref={drag}
+      width="70%"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      margin="0 auto"
+    >
+      <FormControl
+        label={label}
+        error={shouldShowError ? "Please input a valid email address" : null}
+      >
+        <Input
+          id="input-id"
+          value={value}
+          onChange={onChange}
+          onBlur={() => setIsVisited(true)}
+          error={shouldShowError}
+          overrides={shouldShowError ? { After: Negative } : {}}
+        />
+      </FormControl>
+    </Block>
   );
 };

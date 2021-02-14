@@ -1,23 +1,34 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
-import { useNode } from "@craftjs/node";
+import { Text } from "@chakra-ui/react";
+import { FormControl } from "baseui/form-control";
+import { Input } from "baseui/input";
+import { Block } from "baseui/block";
+import { useNode } from "@craftjs/core";
 
-interface ShortTextProps {
-  varient?: "small" | "regular";
-}
+export const ShortText = ({ label }) => {
+  // const {
+  //   connectors: { drag },
+  // } = useNode();
 
-export const ShortText: React.FC<ShortTextProps> = ({
-  children,
-  varient = "regular",
-}) => {
   return (
-    <Box
-      maxW={varient === "regular" ? "800px" : "400px"}
-      w="100%"
-      mt={10}
-      mx="auto"
+    <Block
+      width="70%"
+      display="flex"
+      // ref={drag}
+      flexDirection="column"
+      justifyContent="center"
+      margin="0 auto"
     >
-      {children}
-    </Box>
+      <FormControl
+        label={() => {
+          label;
+        }}
+        error={() => ""}
+        caption={() => ""}
+      >
+        <Input />
+      </FormControl>
+    </Block>
   );
 };
