@@ -11,7 +11,7 @@ const Dashboard: React.FC<{}> = ({}) => {
   const [, createPost] = useCreatePostMutation();
   useIsAuth();
 
-  return <Layout variant="small"></Layout>;
+  return <Layout></Layout>;
 };
 
 export default withUrqlClient(createUrqlClient)(Dashboard);

@@ -1,12 +1,9 @@
-import React from "react";
-import { Box } from "@chakra-ui/react";
-import { Text } from "@chakra-ui/react";
+import { Block } from "baseui/block";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
-import { Block } from "baseui/block";
-import { useNode } from "@craftjs/core";
+import React from "react";
 
-export const ShortText = ({ label }) => {
+export const ShortText = ({ label: any }) => {
   // const {
   //   connectors: { drag },
   // } = useNode();

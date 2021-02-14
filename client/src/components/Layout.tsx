@@ -6,11 +6,11 @@ interface LayoutProps {
   varient?: "small" | "large";
 }
 
-export const Layout: React.FC<{}> = ({ children, varient }) => {
+export const Layout: React.FC<{}> = ({ children }) => {
   return (
     <>
       <NavBar />
-      <Wrapper varient={varient}>{children}</Wrapper>
+      <Wrapper varient={"small"}>{children}</Wrapper>
     </>
   );
 };

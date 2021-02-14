@@ -4,7 +4,7 @@ import { Button } from "baseui/button";
 import { List } from "baseui/dnd-list";
 import { FormControl } from "baseui/form-control";
 import { ChevronDown, ChevronRight, Plus } from "baseui/icon";
-import { Input } from "baseui/input";
+import { Input, InputProps } from "baseui/input";
 import { StyledLink } from "baseui/link";
 import { StatefulMenu } from "baseui/menu";
 import { PLACEMENT, StatefulPopover } from "baseui/popover";
@@ -58,7 +58,7 @@ function move(
   return arr;
 }
 
-const CustomDragHandle = (props) => {
+const CustomDragHandle = (props: any) => {
   useEffect(() => {}, []);
 
   let newob = JSON.parse(props.$value);
@@ -90,8 +90,14 @@ const CustomDragHandle = (props) => {
 const CustomLabel = (node: TreeNode) => {
   const Tag = "label";
 
-  const style = node.selected ? { textDecoration: "underline" } : null;
-  return <Tag style={style}>{node.label}</Tag>;
+  const style = node.selected
+    ? { textDecoration: "underline" }
+    : { textDecoration: "none" };
+  return (
+    <Block $style={{ ...style }}>
+      <Tag>{node.label}</Tag>
+    </Block>
+  );
 };
 
 const CustomTreeLabel = (props: TreeLabelProps) => {
@@ -118,28 +124,17 @@ const CustomTreeLabel = (props: TreeLabelProps) => {
 };
 
 const SurveyCreator: React.FC<{}> = ({}) => {
-  const router = useRouter();
-  const survey = {};
-  const [activeItemId, setActiveItemId] = React.useState("#primary");
   const [surveyState, setSurveyState] = React.useState<any>([
     { name: "page 0", components: [] },
   ]);
-  const [currentPage, setCurrentPage] = React.useState(0);
+  const [currentPage, setCurrentPage] = React.useState<any>(0);
   const [currentElement, setCurrentElemenet] = React.useState<
     number | undefined
   >(undefined);
-  const [activeKey, setActiveKey] = React.useState("0");
+  const [activeKey, setActiveKey] = React.useState<any>("0");
 
-  const [expandedState, setExpandedState] = useState({ "0": false });
-  const [selectedState, setSelectedState] = useState({ "0": false });
-
-  const clear = () => {
-    const n = {};
-    n[`${currentPage}-${currentElement}`] = false;
-    n[`${currentPage}`] = false;
-
-    setSelectedState({ ...surveyState, ...n });
-  };
+  const [expandedState, setExpandedState] = useState<any>({ "0": false });
+  const [selectedState, setSelectedState] = useState<any>({ "0": false });
 
   const deletePage = () => {
     // console.log(currentPage);
@@ -157,32 +152,32 @@ const SurveyCreator: React.FC<{}> = ({}) => {
     setSurveyState(newState);
   };
 
-  const mapState = (state) => {
+  const mapState = (state: any) => {
     let newState = [];
     // { name: "page 0", components: [] },
     for (let i = 0; i < state.length; i++) {
       let newChildren = [];
       if (expandedState[`${i}`] == undefined) {
-        const n = {};
+        const n: any = {};
         n[`${i}`] = false;
         setExpandedState({ ...expandedState, ...n });
       }
 
       if (selectedState[`${i}`] == undefined) {
-        const n = {};
+        const n: any = {};
         n[`${i}`] = false;
         setSelectedState({ ...selectedState, ...n });
       }
 
       for (let j = 0; j < state[i].components.length; j++) {
         if (expandedState[`${i}-${j}`] == undefined) {
-          const n = {};
+          const n: any = {};
           n[`${i}-${j}`] = false;
           setExpandedState({ ...expandedState, ...n });
         }
 
         if (selectedState[`${i}-${j}`] == undefined) {
-          const n = {};
+          const n: any = {};
           n[`${i}-${j}`] = false;
           setSelectedState({ ...selectedState, ...n });
         }
@@ -277,12 +272,14 @@ const SurveyCreator: React.FC<{}> = ({}) => {
             />
           )}
         >
-          <Button
-            style={{ width: "calc(100%)" }}
-            startEnhancer={() => <Plus size={24} />}
-          >
-            Add Element
-          </Button>
+          <Block>
+            <Button
+              $style={{ width: "calc(100%)" }}
+              startEnhancer={() => <Plus size={24} />}
+            >
+              Add Element
+            </Button>
+          </Block>
         </StatefulPopover>
       </Block>
       <Block
@@ -310,30 +307,34 @@ const SurveyCreator: React.FC<{}> = ({}) => {
               <TreeView
                 data={mapState(surveyState)}
                 onToggle={async (node) => {
-                  if (node.label.includes("page")) {
-                    const n = {};
+                  if ((node.label as string).includes("page")) {
+                    const n: any = {};
                     n[`${currentPage}`] = false;
                     n[`${currentPage}-${currentElement}`] = false;
                     n[`${node.id}`] = true;
                     setSelectedState({ ...selectedState, ...n });
                     setCurrentElemenet(undefined);
-                    setCurrentPage(parseInt(node.id));
+                    setCurrentPage(parseInt(node.id as string));
                   } else {
-                    const n = {};
+                    const n: any = {};
                     n[
-                      `${node.id.split("-")[0]}-${node.id.split("-")[1]}`
+                      `${(node.id as string).split("-")[0]}-${
+                        (node.id as string).split("-")[1]
+                      }`
                     ] = true;
-                    n[`${node.id.split("-")[0]}`] = true;
+                    n[`${(node.id as string).split("-")[0]}`] = true;
                     n[`${currentPage}`] = false;
                     n[`${currentPage}-${currentElement}`] = false;
                     setSelectedState({ ...selectedState, ...n });
                     console.log(selectedState);
-                    setCurrentElemenet(parseInt(node.id.split("-")[1]));
-                    setCurrentPage(parseInt(node.id.split("-")[0]));
+                    setCurrentElemenet(
+                      parseInt((node.id as string).split("-")[1])
+                    );
+                    setCurrentPage(parseInt((node.id as string).split("-")[0]));
                     setActiveKey("1");
                   }
-                  const n = {};
-                  n[node.id as number] = !expandedState[node.id as number];
+                  const n: any = {};
+                  n[`${node.id}`] = !expandedState[`${node.id}`];
                   setExpandedState({ ...expandedState, ...n });
                 }}
                 overrides={{
@@ -357,7 +358,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                         ...surveyState.slice(0, currentPage),
                         {
                           ...surveyState[currentPage],
-                          name: e.target.value,
+                          name: (e.target as InputProps).value,
                         },
                         ...surveyState.slice(currentPage + 1),
                       ]);
@@ -389,7 +390,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                           let newElement = JSON.parse(
                             surveyState[currentPage].components[currentElement]
                           );
-                          newElement.label = e.target.value;
+                          newElement.label = (e.target as InputProps).value;
                           setSurveyState([
                             ...surveyState.slice(0, currentPage),
                             {
@@ -422,7 +423,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                             ...surveyState.slice(0, currentPage),
                             {
                               ...surveyState[currentPage],
-                              name: e.target.value,
+                              name: (e.target as InputProps).value,
                             },
                             ...surveyState.slice(currentPage + 1),
                           ]);
@@ -460,13 +461,13 @@ const SurveyCreator: React.FC<{}> = ({}) => {
         margin="0 auto"
       >
         <Breadcrumbs>
-          {surveyState.map((p, index) => {
+          {surveyState.map((p: any, index: any) => {
             return index == currentPage ? (
               <span>{p.name}</span>
             ) : (
               <StyledLink
                 onClick={() => {
-                  const n = {};
+                  const n: any = {};
                   n[`${currentPage}`] = false;
                   n[`${currentPage}-${currentElement}`] = false;
                   n[`${index}`] = true;

@@ -21,7 +21,13 @@ function Negative() {
     </div>
   );
 }
-export const Email = ({ label, defaults }) => {
+export const Email = ({
+  label,
+  defaults,
+}: {
+  label: string;
+  defaults: string;
+}) => {
   // const {
   //   connectors: { drag },
   // } = useNode();

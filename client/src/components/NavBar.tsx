@@ -30,7 +30,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
 
   if (fetching) {
     body = null;
-  } else if (true) {
+  } else if (!data?.me) {
     //!data?.me
     body = (
       <>
@@ -78,6 +78,11 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         mainItems={mainItems}
         onMainItemSelect={(item) => {
           setMainItems((prev) => setItemActive(prev, item));
+          if (item.label == "Dashboard") {
+            router.push("/dashboard");
+          } else if (item.label == "Create a survey") {
+            router.push("/survey-creator");
+          }
         }}
         username="Belal"
         usernameSubtitle="5 Stars"
@@ -90,13 +95,6 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         onUserItemSelect={(item) => {
           if (item.label == "Logout") {
             logout();
-          }
-        }}
-        onMainItemSelect={(item) => {
-          if (item.label == "Dashboard") {
-            router.push("/dashboard");
-          } else if (item.label == "Create a survey") {
-            router.push("/survey-creator");
           }
         }}
       />

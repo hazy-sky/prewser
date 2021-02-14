@@ -16,7 +16,9 @@ const Dashboard: React.FC<{}> = ({}) => {
       justifyContent="center"
       margin="0 auto"
     >
-      <H1 style={{ textAlign: "center" }}>Survey</H1>
+      <Block text-align="center">
+        <H1>Survey</H1>
+      </Block>
     </Block>
   );
 };

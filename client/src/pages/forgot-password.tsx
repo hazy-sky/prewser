@@ -25,19 +25,8 @@ export const ForgotPassword: React.FC<{}> = ({}) => {
             <Box>We sent an email to the account if it exists</Box>
           ) : (
             <Form>
-              <InputField
-                name="email"
-                placeholder="Email"
-                label="Email"
-                type="email"
-              />
-              <Button
-                mt={4}
-                type="submit"
-                isLoading={isSubmitting}
-                variant="solid"
-                colorScheme="teal"
-              >
+              <InputField name="email" label="Email" type="email" />
+              <Button type="submit" isLoading={isSubmitting}>
                 Forgot Password
               </Button>
             </Form>

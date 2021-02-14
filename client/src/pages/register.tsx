@@ -45,13 +45,7 @@ export const register: React.FC<registerProps> = ({}) => {
                 type="password"
               />
             </Box>
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              variant="solid"
-              colorScheme="teal"
-            >
+            <Button type="submit" isLoading={isSubmitting}>
               Register
             </Button>
           </Form>

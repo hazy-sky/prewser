@@ -64,32 +64,32 @@ export const Code: NextPage = () => {
   //     setTimeout(() => setOutput(output + outputs.join("")), 100);
   //   });
 
-    // socket.emit("init", {
-    //   host: "localhost",
-    //   port: 5901,
-    //   password: "vncpassword",
-    // });
+  // socket.emit("init", {
+  //   host: "localhost",
+  //   port: 5901,
+  //   password: "vncpassword",
+  // });
 
-    socket.on("error", (msg) => {
-      setIsLoading(false);
-      outputs.push(msg);
-      setTimeout(() => setOutput(output + outputs.join("")), 100);
-    });
-    socket.on("running", (msg) => {
-      setIsLoading(false);
-    });
-  };
+  //   socket.on("error", (msg) => {
+  //     setIsLoading(false);
+  //     outputs.push(msg);
+  //     setTimeout(() => setOutput(output + outputs.join("")), 100);
+  //   });
+  //   socket.on("running", (msg) => {
+  //     setIsLoading(false);
+  //   });
+  // };
 
-  const stop = () => {
-    axios
-      .post("http://localhost:3000/stop", {
-        sessid: "asasdfsdf",
-      })
-      .then(() => {
-        setIsLoading(false);
-        setRunning(false);
-      });
-  };
+  // const stop = () => {
+  //   axios
+  //     .post("http://localhost:3000/stop", {
+  //       sessid: "asasdfsdf",
+  //     })
+  //     .then(() => {
+  //       setIsLoading(false);
+  //       setRunning(false);
+  //     });
+  // };
 
   return (
     <div className="App">

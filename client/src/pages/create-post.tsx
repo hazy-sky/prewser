@@ -15,7 +15,7 @@ const CreatePost: React.FC<{}> = ({}) => {
   useIsAuth();
 
   return (
-    <Layout variant="small">
+    <Layout>
       <Formik
         initialValues={{ title: "", text: "" }}
         onSubmit={async (values) => {
@@ -25,14 +25,9 @@ const CreatePost: React.FC<{}> = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField name="title" placeholder="Title" label="Title" />
+            <InputField name="title" label="Title" />
             <Box mt={4}>
-              <InputField
-                textarea
-                name="text"
-                placeholder="text..."
-                label="Body"
-              />
+              <InputField textarea name="text" label="Body" />
             </Box>
 
             <Button

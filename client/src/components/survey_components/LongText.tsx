@@ -1,9 +1,9 @@
 import { Block } from "baseui/block";
-import { Textarea } from "baseui/textarea";
+import { Textarea, TextareaProps } from "baseui/textarea";
 import { Label3 } from "baseui/typography";
 import React from "react";
 
-export const LongText = ({ label }) => {
+export const LongText = ({ label }: { label: string }) => {
   // const {
   //   connectors: { drag },
   // } = useNode();
@@ -21,7 +21,7 @@ export const LongText = ({ label }) => {
       <Label3 style={{ marginBottom: "10px" }}>{label}</Label3>
       <Textarea
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => setValue((e.target as TextareaProps).value as string)}
         placeholder="Controlled Input"
         clearOnEscape
       />

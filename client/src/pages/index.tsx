@@ -16,7 +16,7 @@ const Index = () => {
       {/* <NextLink href="/create-post">
         <Link>Create Post</Link>
       </NextLink> */}
-      <H1 style={{ textAlign: "center" }}>Create surveys with ease</H1>
+      <H1 $style={{ textAlign: "center" }}>Create surveys with ease</H1>
       {fetching && !data ? (
         <div>Loading...</div>
       ) : (
