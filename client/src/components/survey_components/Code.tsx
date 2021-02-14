@@ -1,4 +1,3 @@
-import { Box, Text } from "@chakra-ui/react";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useStyletron } from "baseui";

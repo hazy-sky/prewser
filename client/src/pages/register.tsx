@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
@@ -32,19 +31,13 @@ export const register: React.FC<registerProps> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField name="username" label="Username *" />
-            <Box mt={4}>
-              <InputField name="email" label="Email*" />
-            </Box>
-            <Box mt={4}>
-              <InputField name="password" label="Password*" type="password" />
-            </Box>
-            <Box mt={4}>
-              <InputField
-                name="org"
-                label="Institution/Company name "
-                type="password"
-              />
-            </Box>
+            <InputField name="email" label="Email*" />
+            <InputField name="password" label="Password*" type="password" />
+            <InputField
+              name="org"
+              label="Institution/Company name "
+              type="password"
+            />
             <Button type="submit" isLoading={isSubmitting}>
               Register
             </Button>

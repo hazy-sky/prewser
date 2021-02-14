@@ -1,6 +1,4 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
-import { Input, Text, Textarea, Stack } from "@chakra-ui/react";
 import { RadioGroup, Radio, ALIGN } from "baseui/radio";
 import {
   Label1,

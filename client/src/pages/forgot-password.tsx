@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { Button } from "baseui/button";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";

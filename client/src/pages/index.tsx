@@ -1,4 +1,3 @@
-import { Stack } from "@chakra-ui/react";
 import { H1 } from "baseui/typography";
 import { withUrqlClient } from "next-urql";
 import React from "react";
@@ -19,16 +18,7 @@ const Index = () => {
       <H1 $style={{ textAlign: "center" }}>Create surveys with ease</H1>
       {fetching && !data ? (
         <div>Loading...</div>
-      ) : (
-        <Stack spacing={8}>
-          {/* {data.posts.map((p) => (
-            <Box key={p.id} p={5} shadow="md" borderWidth="1px">
-              <Heading fontSize="xl">{p.title}</Heading>
-              <Text mt={4}>{p.textSnippet}</Text>
-            </Box>
-          ))} */}
-        </Stack>
-      )}
+      ) : null}
     </Layout>
   );
 };

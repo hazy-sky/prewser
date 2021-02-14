@@ -1,4 +1,3 @@
-import { Box, Button, Link, Flex } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
@@ -10,6 +9,8 @@ import { useChangePasswordMutation } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { toErrorMap } from "../../utils/toErrorMap";
 import NextLink from "next/link";
+import { Button } from "baseui/button";
+import { StyledLink } from "baseui/link";
 
 export const ChangePassword: NextPage = () => {
   const [, changePassword] = useChangePasswordMutation();
@@ -39,30 +40,20 @@ export const ChangePassword: NextPage = () => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <Box mt={4}>
-              <InputField
-                name="newPassword"
-                label="New Password"
-                type="password"
-              />
-            </Box>
+            <InputField
+              name="newPassword"
+              label="New Password"
+              type="password"
+            />
             {tokenError ? (
-              <Flex mt={2}>
-                <Box color="tomato" mr={2}>
-                  {tokenError}
-                </Box>
+              <div>
+                {tokenError}
                 <NextLink href="/forgot-password">
-                  <Link>Go here to reset it again</Link>
+                  <StyledLink>Go here to reset it again</StyledLink>
                 </NextLink>
-              </Flex>
+              </div>
             ) : null}
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              variant="solid"
-              colorScheme="teal"
-            >
+            <Button type="submit" isLoading={isSubmitting}>
               Change Password
             </Button>
           </Form>
