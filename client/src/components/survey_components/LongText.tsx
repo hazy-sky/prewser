@@ -18,7 +18,7 @@ export const LongText = ({ label }: { label: string }) => {
       justifyContent="center"
       margin="0 auto"
     >
-      <Label3 style={{ marginBottom: "10px" }}>{label}</Label3>
+      <Label3 $style={{ marginBottom: "10px" }}>{label}</Label3>
       <Textarea
         value={value}
         onChange={(e) => setValue((e.target as TextareaProps).value as string)}
