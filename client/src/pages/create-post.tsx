@@ -23,6 +23,7 @@ const CreatePost: React.FC<{}> = ({}) => {
           if (!error) router.push("/");
         }}
       >
+        //s
         {({ isSubmitting }) => (
           <Form>
             <InputField name="title" label="Title" />
