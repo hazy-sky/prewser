@@ -1,6 +1,7 @@
-const withTM = require("next-transpile-modules")([
-  "@react-three/drei",
-  "three",
-]);
-
-module.exports = withTM();
+module.exports = {
+  webpack: function (config) {
+    config.externals = config.externals || {};
+    config.externals["styletron-server"] = "styletron-server";
+    return config;
+  },
+};
