@@ -16,10 +16,6 @@ import { isServer } from "../utils/isServer";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-  const [{ data, fetching }] = useMeQuery({
-    pause: isServer(),
-  });
   const router = useRouter();
   const [mainItems, setMainItems] = useState([
     { label: "Create a survey" },
@@ -27,10 +23,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   ]);
 
   let body = null;
-
-  if (fetching) {
-    body = null;
-  } else if (!data?.me) {
+  if (!isServer() && !localStorage.getItem("token")) {
     //!data?.me
     body = (
       <>
@@ -61,18 +54,6 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   } else {
     body = (
-      // <Flex>
-      //   <Box mr={2}>{data.me.username}</Box>
-      //   <Button
-      //     variant="link"
-      //     onClick={() => {
-      //       logout();
-      //     }}
-      //     isLoading={logoutFetching}
-      //   >
-      //     Logout
-      //   </Button>
-      // </Flex>
       <AppNavBar
         title="Survlow"
         mainItems={mainItems}
@@ -84,48 +65,26 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             router.push("/survey-creator");
           }
         }}
-        username="Belal"
-        usernameSubtitle="5 Stars"
-        userItems={[
-          { label: "Settings" },
-          { label: "Logout" },
-          // { icon: Overflow, label: "User A" },
-          // { icon: Overflow, label: "User B" },
-        ]}
+        username={
+          !isServer()
+            ? JSON.parse(localStorage.getItem("user") as string).firstName
+            : ""
+        }
+        usernameSubtitle={
+          !isServer()
+            ? JSON.parse(localStorage.getItem("user") as string).email
+            : ""
+        }
+        userItems={[{ label: "Settings" }, { label: "Logout" }]}
         onUserItemSelect={(item) => {
           if (item.label == "Logout") {
-            logout();
+            localStorage.removeItem("token");
+            router.push("/");
           }
         }}
       />
     );
   }
-
-  // return (
-  //   <HeaderNavigation>
-  //     <StyledNavigationList $align={ALIGN.left}>
-  //       <StyledNavigationItem>Prewser</StyledNavigationItem>
-  //     </StyledNavigationList>
-  //     <StyledNavigationList $align={ALIGN.center} />
-  //     <StyledNavigationList $align={ALIGN.right}>
-  //       <StyledNavigationItem>
-  //         <StyledLink href="/login">Login</StyledLink>
-  //       </StyledNavigationItem>
-  //     </StyledNavigationList>
-  //     <StyledNavigationList $align={ALIGN.right}>
-  //       <StyledNavigationItem>
-  //         <Button
-  //           onClick={(e) => {
-  //             e.preventDefault();
-  //             router.push("/register");
-  //           }}
-  //         >
-  //           Get started
-  //         </Button>
-  //       </StyledNavigationItem>
-  //     </StyledNavigationList>
-  //   </HeaderNavigation>
-  // );
 
   return <Block margin="0">{body}</Block>;
 };

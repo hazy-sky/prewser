@@ -10,11 +10,17 @@ import { toErrorMap } from "../utils/toErrorMap";
 import NextLink from "next/link";
 import { Button } from "baseui/button";
 import { StyledLink } from "baseui/link";
+import axios from "axios";
+import { isServer } from "../utils/isServer";
 
 export const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
 
-  const [, login] = useLoginMutation();
+  const login = () => {};
+
+  if (!isServer() && localStorage.getItem("token")) {
+    router.push("/");
+  }
 
   return (
     <>
@@ -22,16 +28,35 @@ export const Login: React.FC<{}> = ({}) => {
         <Formik
           initialValues={{ usernameOrEmail: "", password: "" }}
           onSubmit={async (values, { setErrors }) => {
-            const response = await login(values);
-            if (response.data?.login.errors) {
-              setErrors(toErrorMap(response.data.login.errors));
-            } else if (response.data?.login.user) {
-              if (typeof router.query.next === "string") {
-                router.push(router.query.next);
-              } else {
-                router.push("/");
+            const response = await axios
+              .post("https://survey-manager-v1.herokuapp.com/api/auth", {
+                email: values.usernameOrEmail,
+                password: values.password,
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            console.log(response);
+            if (response) {
+              if (response.data) {
+                localStorage.setItem("token", response.data.token.accessToken);
+                localStorage.setItem(
+                  "user",
+                  JSON.stringify(response.data.user)
+                );
+                if (typeof router.query.next === "string") {
+                  router.push(router.query.next);
+                } else {
+                  router.push("/");
+                }
               }
             }
+            // const response = await login(values);
+            // if (response.data?.login.errors) {
+            //   setErrors(toErrorMap(response.data.login.errors));
+            // } else if (response.data?.login.user) {
+
+            // }
           }}
         >
           {({ isSubmitting }) => (
@@ -47,6 +72,7 @@ export const Login: React.FC<{}> = ({}) => {
                 $style={{ marginTop: "20px" }}
                 type="submit"
                 isLoading={isSubmitting}
+                onClick={() => login}
               >
                 Login
               </Button>

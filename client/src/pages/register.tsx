@@ -8,24 +8,47 @@ import { useRegisterMutation } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";
 import { Button } from "baseui/button";
+import axios from "axios";
+import { isServer } from "../utils/isServer";
 
 interface registerProps {}
 
 export const register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
-  const [, register] = useRegisterMutation();
+
+  const register = () => {};
+
+  if (!isServer() && localStorage.getItem("token")) {
+    router.push("/");
+  }
 
   return (
     <Wrapper varient="small">
       <Formik
-        initialValues={{ email: "", username: "", password: "" }}
+        initialValues={{ email: "", username: "", password: "", org: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register({ options: values });
-          if (response.data?.register.errors) {
-            setErrors(toErrorMap(response.data.register.errors));
-          } else if (response.data?.register.user) {
-            router.push("/");
+          console.log(values);
+          const response = await axios
+            .post("https://survey-manager-v1.herokuapp.com/api/Users", {
+              firstName: values.username,
+              lastName: values.org,
+              email: values.email,
+              password: values.password,
+            })
+            .catch((err) => console.log(err));
+          if (response) {
+            if (response.data) {
+              localStorage.setItem("token", response.data.token.accessToken);
+
+              router.push("/login");
+            }
           }
+          // const response = await register({ options: values });
+          // if (response.data?.register.errors) {
+          //   setErrors(toErrorMap(response.data.register.errors));
+          // } else if (response.data?.register.user) {
+          //   router.push("/");
+          // }
         }}
       >
         {({ isSubmitting }) => (

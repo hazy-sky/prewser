@@ -33,7 +33,7 @@ export const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <FormControl label={() => label} error={() => error} caption={() => ""}>
-      <Input placeholder={placeholder} />
+      <Input placeholder={placeholder} {...field} id={field.name} />
     </FormControl>
   );
 

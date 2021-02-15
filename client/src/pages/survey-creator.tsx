@@ -27,6 +27,7 @@ import { MultipleChoice } from "../components/survey_components/MutlipleChoice";
 import { PlainText } from "../components/survey_components/PlainText";
 import { ShortText } from "../components/survey_components/ShortText";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import { useIsAuth } from "../utils/useIsAuth";
 
 const availableComps = [
   { label: "Code" },
@@ -129,6 +130,7 @@ const CustomTreeLabel = (props: TreeLabelProps) => {
 };
 
 const SurveyCreator: React.FC<{}> = ({}) => {
+  useIsAuth();
   const [surveyState, setSurveyState] = React.useState<any>([
     { name: "Page 0", components: [] },
   ]);

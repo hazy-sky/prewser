@@ -7,7 +7,8 @@ export const useIsAuth = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!fetching && !data?.me) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       router.replace("/login?next=" + router.pathname);
     }
   }, [fetching, data, router]);
