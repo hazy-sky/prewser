@@ -15,7 +15,8 @@ import {
   TreeNode,
   TreeView,
 } from "baseui/tree-view";
-import { Label2 } from "baseui/typography";
+import { Label2, Label3 } from "baseui/typography";
+import { Select } from "baseui/Select";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ import { PlainText } from "../components/survey_components/PlainText";
 import { ShortText } from "../components/survey_components/ShortText";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { useIsAuth } from "../utils/useIsAuth";
+import axios from "axios";
 
 const availableComps = [
   { label: "Code" },
@@ -139,9 +141,53 @@ const SurveyCreator: React.FC<{}> = ({}) => {
     number | undefined
   >(undefined);
   const [activeKey, setActiveKey] = React.useState<any>("0");
+  const [activeKey2, setActiveKey2] = React.useState<any>("0");
+  const [value, setValue] = React.useState<any>([]);
 
   const [expandedState, setExpandedState] = useState<any>({ "0": false });
   const [selectedState, setSelectedState] = useState<any>({ "0": false });
+  const router = useRouter();
+
+  useEffect(() => {
+    let config = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    if (typeof router.query.survey === "string") {
+      axios
+        .get(
+          `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${
+            JSON.parse(localStorage.getItem("user") as string).id
+          }&email=${
+            JSON.parse(localStorage.getItem("user") as string).email
+          }&id=${router.query.survey}`,
+          config
+        )
+        .then((response) => {
+          console.log(response.data.questions);
+          for (let i = 0; i < response.data.questions.length; i++) {}
+
+          // {
+          //   "questions": [
+          //     {
+          //       "id": 0,
+          //       "typeId": 0,
+          //       "isMain": true,
+          //       "order": 0,
+          //       "isActive": true,
+          //       "answerSchema": "string",
+          //       "pageNumber": 0,
+          //       "title": "string"
+          //     }
+          //   ]
+          // }
+        })
+        .catch((err) => console.error(err));
+    } else {
+      router.push("dashboard");
+    }
+  }, []);
 
   const deletePage = () => {
     // console.log(currentPage);
@@ -297,6 +343,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           </Block>
         </StatefulPopover>
       </Block>
+
       <Block
         position="fixed"
         left="0"
@@ -380,6 +427,16 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                     }}
                   />
                 </FormControl>
+                <StyledLink
+                  style={{
+                    color: "red",
+                  }}
+                  onClick={() => {
+                    deletePage();
+                  }}
+                >
+                  Delete Page
+                </StyledLink>
                 {currentElement != undefined && currentElement >= 0 ? (
                   <>
                     <Label2>Selected Component:</Label2>
@@ -453,20 +510,43 @@ const SurveyCreator: React.FC<{}> = ({}) => {
         </Block>
       </Block>
 
-      <StyledLink
-        style={{
-          position: "fixed",
-          right: "0",
-          marginRight: "70px",
-          marginTop: "50px",
-          color: "red",
-        }}
-        onClick={() => {
-          deletePage();
-        }}
+      <Block
+        position="fixed"
+        right="0"
+        marginLeft="0px"
+        width="240px"
+        overflow-wrap="break-word"
+        word-wrap="break-word"
+        height="100%"
+        overflow="scroll"
+        overflow-y="scroll"
+        overflow-x="hidden"
       >
-        Delete Page
-      </StyledLink>
+        <Block>
+          <Tabs
+            onChange={({ activeKey }) => {
+              setActiveKey2(activeKey);
+            }}
+            activeKey={activeKey2}
+          >
+            <Tab title="Sharing">
+              <Block>
+                <Label3 $style={{ marginBottom: "10px" }}>
+                  Select a privacy option...
+                </Label3>
+                <Select
+                  options={[
+                    { label: "Private", id: "0" },
+                    { label: "Public", id: "1" },
+                  ]}
+                  value={value}
+                  onChange={(params) => setValue(params.value)}
+                ></Select>
+              </Block>
+            </Tab>
+          </Tabs>
+        </Block>
+      </Block>
 
       <Block
         marginTop="35px"

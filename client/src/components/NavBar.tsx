@@ -17,10 +17,7 @@ interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const router = useRouter();
-  const [mainItems, setMainItems] = useState([
-    { label: "Create a survey" },
-    { label: "Dashboard" },
-  ]);
+  const [mainItems, setMainItems] = useState([{ label: "Dashboard" }]);
 
   let body = null;
   if (!isServer() && !localStorage.getItem("token")) {
@@ -61,8 +58,6 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           setMainItems((prev) => setItemActive(prev, item));
           if (item.label == "Dashboard") {
             router.push("/dashboard");
-          } else if (item.label == "Create a survey") {
-            router.push("/survey-creator");
           }
         }}
         username={

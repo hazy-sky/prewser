@@ -39,8 +39,8 @@ export const register: React.FC<registerProps> = ({}) => {
           if (response) {
             if (response.data) {
               localStorage.setItem("token", response.data.token.accessToken);
-
-              router.push("/login");
+              localStorage.setItem("user", JSON.stringify(response.data.user));
+              router.push("/dashboard");
             }
           }
           // const response = await register({ options: values });

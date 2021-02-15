@@ -20,6 +20,7 @@ import axios from "axios";
 const Dashboard: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [surveys, setSurveys] = useState<any>([]);
+  const [numS, setNumS] = useState<any>(0);
   useIsAuth();
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const Dashboard: React.FC<{}> = ({}) => {
       .get("https://survey-manager-v1.herokuapp.com/api/Surveys/GetAll", config)
       .then((response) => {
         const newState = [];
+        setNumS(response.data.length - 1);
         for (let i = 0; i < response.data.length; i++) {
           newState.push([
             <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
@@ -46,7 +48,15 @@ const Dashboard: React.FC<{}> = ({}) => {
             <Block>
               <ButtonGroup>
                 <Button>View</Button>
-                <Button>Edit</Button>
+                <Button
+                  onClick={() => {
+                    router.push(
+                      "/survey-creator?survey=" + response.data[i].id
+                    );
+                  }}
+                >
+                  Edit
+                </Button>
                 <Button>Remove</Button>
               </ButtonGroup>
             </Block>,
@@ -55,7 +65,7 @@ const Dashboard: React.FC<{}> = ({}) => {
         setSurveys(newState);
         console.log(response);
       });
-  });
+  }, [numS]);
 
   return (
     <Layout>
@@ -81,6 +91,7 @@ const Dashboard: React.FC<{}> = ({}) => {
                     )
                     .catch((error) => console.log(error));
                   console.log(response);
+                  setNumS(numS + 1);
                   close();
                 }}
                 initialValues={{ surveyname: "", description: "" }}
