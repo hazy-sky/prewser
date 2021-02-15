@@ -16,7 +16,7 @@ import {
   TreeView,
 } from "baseui/tree-view";
 import { Label2, Label3 } from "baseui/typography";
-import { Select } from "baseui/Select";
+import { Select } from "baseui/select";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
