@@ -58,6 +58,11 @@ function move(
   return arr;
 }
 
+function remove(arr: Array<string | undefined>, index: number) {
+  arr.splice(index, 1);
+  return arr;
+}
+
 const CustomDragHandle = (props: any) => {
   useEffect(() => {}, []);
 
@@ -125,7 +130,7 @@ const CustomTreeLabel = (props: TreeLabelProps) => {
 
 const SurveyCreator: React.FC<{}> = ({}) => {
   const [surveyState, setSurveyState] = React.useState<any>([
-    { name: "page 0", components: [] },
+    { name: "Page 0", components: [] },
   ]);
   const [currentPage, setCurrentPage] = React.useState<any>(0);
   const [currentElement, setCurrentElemenet] = React.useState<
@@ -230,7 +235,10 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                   if (item.item.label === "Add page") {
                     setSurveyState([
                       ...surveyState,
-                      { name: "page " + currentPage + 1, components: [] },
+                      {
+                        name: `Page ${parseInt(currentPage) + 1}`,
+                        components: [],
+                      },
                     ]);
                     setCurrentPage(currentPage + 1);
                   }
@@ -506,22 +514,51 @@ const SurveyCreator: React.FC<{}> = ({}) => {
             },
           }}
           onChange={({ oldIndex, newIndex }) => {
-            console.log(oldIndex, newIndex, currentElement);
             if (currentElement == oldIndex) {
-              console.log("f");
               setCurrentElemenet(newIndex);
             }
+            if (oldIndex === currentElement && newIndex === -1) {
+              const n: any = {};
+              n[`${currentPage}`] = false;
+              n[`${currentPage}-${currentElement}`] = false;
+              setSelectedState({ ...selectedState, ...n });
+              setCurrentElemenet(undefined);
+            }
+
+            if (
+              currentElement &&
+              oldIndex < currentElement &&
+              newIndex >= currentElement
+            ) {
+              const n: any = {};
+              n[`${currentPage}-${currentElement}`] = false;
+              n[`${currentPage}-${currentElement - 1}`] = true;
+              setSelectedState({ ...selectedState, ...n });
+              setCurrentElemenet(currentElement - 1);
+            }
+
+            if (
+              currentElement &&
+              oldIndex > currentElement &&
+              newIndex <= currentElement
+            ) {
+              const n: any = {};
+              n[`${currentPage}-${currentElement}`] = false;
+              n[`${currentPage}-${currentElement + 1}`] = true;
+              setSelectedState({ ...selectedState, ...n });
+              setCurrentElemenet(currentElement + 1);
+            }
+
+            const newState =
+              newIndex === -1
+                ? remove(surveyState[currentPage].components, oldIndex)
+                : move(surveyState[currentPage].components, oldIndex, newIndex);
+
             setSurveyState([
               ...surveyState.slice(0, currentPage),
               {
                 ...surveyState[currentPage],
-                components: [
-                  ...move(
-                    surveyState[currentPage].components,
-                    oldIndex,
-                    newIndex
-                  ),
-                ],
+                components: [...newState],
               },
               ...surveyState.slice(currentPage + 1),
             ]);
