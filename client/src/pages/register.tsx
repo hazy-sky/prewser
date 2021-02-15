@@ -36,6 +36,8 @@ export const register: React.FC<registerProps> = ({}) => {
               password: values.password,
             })
             .catch((err) => console.log(err));
+          router.push("/login");
+
           if (response) {
             if (response.data) {
               localStorage.setItem("token", response.data.token.accessToken);

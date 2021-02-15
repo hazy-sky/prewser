@@ -30,6 +30,7 @@ import { ShortText } from "../components/survey_components/ShortText";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { useIsAuth } from "../utils/useIsAuth";
 import axios from "axios";
+import { counter } from "@fortawesome/fontawesome-svg-core";
 
 const availableComps = [
   { label: "Code" },
@@ -39,6 +40,15 @@ const availableComps = [
   { label: "Multiple Choices" },
   { label: "Plain Text" },
 ];
+
+const compsIds: any = {
+  "Multiple Choices": 1,
+  "Short Text": 2,
+  "Long Text": 3,
+  Code: 4,
+  Statement: 5,
+  Email: 6,
+};
 
 function move(
   arr: Array<string | undefined>,
@@ -531,7 +541,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           >
             <Tab title="Sharing">
               <Block>
-                <Label3 $style={{ marginBottom: "10px" }}>
+                <Label3 $style={{ marginBottom: "10px", marginTop: "10px" }}>
                   Select a privacy option...
                 </Label3>
                 <Select
@@ -541,13 +551,12 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                   ]}
                   value={value}
                   onChange={(params) => setValue(params.value)}
-                ></Select>
+                />
               </Block>
             </Tab>
           </Tabs>
         </Block>
       </Block>
-
       <Block
         marginTop="35px"
         width="70%"
@@ -585,6 +594,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
         flexDirection="column"
         justifyContent="center"
         margin="0 auto"
+        overflow="hidden"
       >
         <List
           items={surveyState[currentPage].components}
@@ -647,6 +657,48 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           }}
         />
       </Block>
+      <Button
+        $style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          margin: "14px",
+          marginRight: "30px",
+        }}
+        onClick={async () => {
+          const questions = [];
+          for (let i = 0; i < surveyState.length; i++) {
+            for (let j = 0; j < surveyState[i].components.length; j++) {
+              const { type, label, extra, selected } = JSON.parse(
+                surveyState[i].components[j]
+              );
+
+              questions.push({
+                typeId: compsIds[type],
+                isMain: true,
+                order: j,
+                isActive: true,
+                answerSchema: "extra",
+                pageNumber: i,
+                title: label,
+              });
+            }
+          }
+          const question = { questions: [...questions] };
+          console.log(question);
+          let config = {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          };
+          const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/questions`;
+
+          const response = await axios.post(link, { ...question }, config);
+          console.log(response);
+        }}
+      >
+        Save
+      </Button>
     </Block>
   );
 };
