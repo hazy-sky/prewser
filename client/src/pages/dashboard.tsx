@@ -16,11 +16,14 @@ import { Plus } from "baseui/icon";
 import { Form, Formik } from "formik";
 import { InputField } from "../components/InputField";
 import axios from "axios";
+import { Checkbox, LABEL_PLACEMENT } from "baseui/checkbox";
 
 const Dashboard: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [surveys, setSurveys] = useState<any>([]);
   const [numS, setNumS] = useState<any>(0);
+  const [privacy, setPrivacy] = React.useState(false);
+
   useIsAuth();
 
   useEffect(() => {
@@ -35,6 +38,7 @@ const Dashboard: React.FC<{}> = ({}) => {
         const newState = [];
         setNumS(response.data.length - 1);
         for (let i = 0; i < response.data.length; i++) {
+          // console.log(response.data[i].share);
           newState.push([
             <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
               {response.data[i].title}
@@ -47,7 +51,17 @@ const Dashboard: React.FC<{}> = ({}) => {
             </Label2>,
             <Block>
               <ButtonGroup>
-                <Button>View</Button>
+                <Button
+                  onClick={() => {
+                    console.log(response.data[i]);
+                    // router.push(
+                    //   "/survey-creator?survey=" +
+                    //     response.data[i].share.uniqueId
+                    // );
+                  }}
+                >
+                  View
+                </Button>
                 <Button
                   onClick={() => {
                     router.push(
@@ -90,7 +104,17 @@ const Dashboard: React.FC<{}> = ({}) => {
                       config
                     )
                     .catch((error) => console.log(error));
-                  console.log(response);
+                  const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/Share`;
+                  let type = 1;
+                  if (privacy) {
+                    type = 2;
+                  }
+                  const response2 = await axios.post(
+                    link,
+                    { privacyType: type, emails: [] },
+                    config
+                  );
+                  console.log(response2);
                   setNumS(numS + 1);
                   close();
                 }}
@@ -100,6 +124,7 @@ const Dashboard: React.FC<{}> = ({}) => {
                   <Form>
                     <InputField label="Name of the survey:" name="surveyname" />
                     <InputField label="Description:" name="description" />
+
                     <Button
                       type="submit"
                       isLoading={isSubmitting}
@@ -107,6 +132,15 @@ const Dashboard: React.FC<{}> = ({}) => {
                     >
                       Create
                     </Button>
+                    <Checkbox
+                      checked={privacy}
+                      onChange={(e) => {
+                        setPrivacy((e.target as any).checked);
+                      }}
+                      labelPlacement={LABEL_PLACEMENT.right}
+                    >
+                      Private
+                    </Checkbox>
                   </Form>
                 )}
               </Formik>
@@ -121,6 +155,18 @@ const Dashboard: React.FC<{}> = ({}) => {
       <Table
         columns={["Name", "description", "Number of Submissions", "Actions"]}
         data={[...surveys]}
+      />
+      <Table
+        style={{ marginBottom: "400px" }}
+        columns={["Templates", "Actions"]}
+        data={[
+          [
+            <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
+              Exam
+            </Label2>,
+            <Button>Use</Button>,
+          ],
+        ]}
       />
     </Layout>
   );

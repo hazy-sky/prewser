@@ -50,6 +50,15 @@ const compsIds: any = {
   Email: 6,
 };
 
+const idsComps: any = {
+  "1": "Multiple Choices",
+  "2": "Short Text",
+  "3": "Long Text",
+  "4": "Code",
+  "5": "Statement",
+  "6": "Email",
+};
+
 function move(
   arr: Array<string | undefined>,
   old_index: number,
@@ -152,51 +161,87 @@ const SurveyCreator: React.FC<{}> = ({}) => {
   >(undefined);
   const [activeKey, setActiveKey] = React.useState<any>("0");
   const [activeKey2, setActiveKey2] = React.useState<any>("0");
-  const [value, setValue] = React.useState<any>([]);
+  const [selectValue, setSelectValue] = React.useState<any>([]);
+
+  const [id, setid] = React.useState("");
+
+  const privacyTypes = [
+    { label: "Not shared", id: "0" },
+    { label: "Public", id: "1" },
+    { label: "Private", id: "2" },
+  ];
 
   const [expandedState, setExpandedState] = useState<any>({ "0": false });
   const [selectedState, setSelectedState] = useState<any>({ "0": false });
   const router = useRouter();
 
-  useEffect(() => {
+  const getData = () => {
     let config = {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     };
     if (typeof router.query.survey === "string") {
-      axios
-        .get(
-          `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${
-            JSON.parse(localStorage.getItem("user") as string).id
-          }&email=${
-            JSON.parse(localStorage.getItem("user") as string).email
-          }&id=${router.query.survey}`,
-          config
-        )
-        .then((response) => {
-          console.log(response.data.questions);
-          for (let i = 0; i < response.data.questions.length; i++) {}
+      const response = async () => {
+        const response = await axios
+          .get(
+            `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${
+              JSON.parse(localStorage.getItem("user") as string).id
+            }&email=${
+              JSON.parse(localStorage.getItem("user") as string).email
+            }&id=${router.query.survey}`,
+            config
+          )
+          .catch((err) => console.error(err));
 
-          // {
-          //   "questions": [
-          //     {
-          //       "id": 0,
-          //       "typeId": 0,
-          //       "isMain": true,
-          //       "order": 0,
-          //       "isActive": true,
-          //       "answerSchema": "string",
-          //       "pageNumber": 0,
-          //       "title": "string"
-          //     }
-          //   ]
-          // }
-        })
-        .catch((err) => console.error(err));
+        if (!response) return;
+        if (response.data.share) {
+          setid(response.data.share.uniqueId);
+        }
+
+        console.log(response);
+        const newState: any = [];
+        let counter = 0;
+        console.log(response);
+        setSelectValue(privacyTypes[response.data.privacyType]);
+        response.data.questions.forEach((question: any) => {
+          if (counter > 20) {
+            return;
+          }
+          counter += 1;
+          if (newState[parseInt(question.pageNumber)] === undefined) {
+            newState.push({
+              name: `page ${question.pageNumber}`,
+              components: [],
+            });
+          }
+          console.log("gg");
+          newState[parseInt(question.pageNumber)].components.push(
+            JSON.stringify({
+              type: idsComps[`${question.typeId}`],
+              label: question.title,
+              default: "",
+              extra: "",
+              selected: false,
+            })
+          );
+        });
+
+        if (newState.length > 0) {
+          console.log("bb");
+          setSurveyState(newState);
+        } else {
+          return [{ name: "Page 0", components: [] }];
+        }
+      };
+      response();
     } else {
       router.push("dashboard");
     }
+  };
+
+  useEffect(() => {
+    getData();
   }, []);
 
   const deletePage = () => {
@@ -398,7 +443,6 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                     n[`${currentPage}`] = false;
                     n[`${currentPage}-${currentElement}`] = false;
                     setSelectedState({ ...selectedState, ...n });
-                    console.log(selectedState);
                     setCurrentElemenet(
                       parseInt((node.id as string).split("-")[1])
                     );
@@ -545,13 +589,34 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                   Select a privacy option...
                 </Label3>
                 <Select
-                  options={[
-                    { label: "Private", id: "0" },
-                    { label: "Public", id: "1" },
-                  ]}
-                  value={value}
-                  onChange={(params) => setValue(params.value)}
+                  options={privacyTypes}
+                  value={selectValue}
+                  onChange={async (params) => {
+                    console.log(params.value);
+                    setSelectValue(params.value);
+                    let config = {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                          "token"
+                        )}`,
+                      },
+                    };
+                    const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/Share`;
+                    let type = 1;
+                    if ((params.option as any).label == "Private") {
+                      type = 2;
+                    }
+                    const response = await axios.post(
+                      link,
+                      { privacyType: type, emails: [] },
+                      config
+                    );
+                    console.log(response);
+                  }}
                 />
+                <StyledLink href={`http://localhost:3000/survey?id=${id}`}>
+                  Survey
+                </StyledLink>
               </Block>
             </Tab>
           </Tabs>
@@ -685,7 +750,6 @@ const SurveyCreator: React.FC<{}> = ({}) => {
             }
           }
           const question = { questions: [...questions] };
-          console.log(question);
           let config = {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -694,7 +758,6 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/questions`;
 
           const response = await axios.post(link, { ...question }, config);
-          console.log(response);
         }}
       >
         Save
