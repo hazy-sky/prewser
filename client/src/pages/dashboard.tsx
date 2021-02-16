@@ -156,18 +156,19 @@ const Dashboard: React.FC<{}> = ({}) => {
         columns={["Name", "description", "Number of Submissions", "Actions"]}
         data={[...surveys]}
       />
-      <Table
-        style={{ marginBottom: "400px" }}
-        columns={["Templates", "Actions"]}
-        data={[
-          [
-            <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
-              Exam
-            </Label2>,
-            <Button>Use</Button>,
-          ],
-        ]}
-      />
+      <Block marginTop="40px" marginBottom="200px">
+        <Table
+          columns={["Templates", "Actions"]}
+          data={[
+            [
+              <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
+                Exam
+              </Label2>,
+              <Button>Use</Button>,
+            ],
+          ]}
+        />
+      </Block>
     </Layout>
   );
 };
