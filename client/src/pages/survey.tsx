@@ -22,8 +22,7 @@ const Survey: React.FC<{}> = ({}) => {
       const response = async () => {
         const response = await axios
           .get(
-            `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${router.query.id}`,
-            config
+            `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${router.query.id}`
           )
           .catch((err) => console.error(err));
         console.log(response);
