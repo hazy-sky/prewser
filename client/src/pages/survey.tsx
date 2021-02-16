@@ -13,25 +13,20 @@ const Survey: React.FC<{}> = ({}) => {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    let config = {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-    if (typeof router.query.id === "string") {
-      const response = async () => {
-        const response = await axios
-          .get(
-            `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${router.query.id}`
-          )
-          .catch((err) => console.error(err));
+    let query = router.asPath.split("?")[1];
+    if (!query) return;
+    const id = query.substr(3);
+    if (!id) return;
+
+    axios
+      .get(`https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${id}`)
+      .then((response) => {
         console.log(response);
         if (!response) return;
         setName(response.data.title);
         setName(response.data.description);
-      };
-      response();
-    }
+      })
+      .catch((err) => console.error(err));
   }, []);
 
   return (
