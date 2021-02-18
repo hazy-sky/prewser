@@ -98,7 +98,7 @@ export const Code: React.FC<CodeProps> = () => {
                 kind={KIND.secondary}
                 shape="circle"
                 onClick={() => {
-                  console.log(editor);
+                  // console.log(editor);
                 }}
               >
                 <FontAwesomeIcon icon={faPlay} style={{ marginLeft: "3px" }} />
