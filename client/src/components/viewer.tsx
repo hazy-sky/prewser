@@ -40,7 +40,7 @@ export const Viewer: React.FC<ViewerProps> = ({ state, answers }) => {
       margin="0 auto"
       marginTop="12%"
     >
-      <Label1>{state.name}</Label1>
+      <Label1>{(state as any).name}</Label1>
       {(state as any).components.map((element) => {
         return getComp(
           JSON.parse(element).type,
