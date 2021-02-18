@@ -8,13 +8,15 @@ import { createUrqlClient } from "../utils/createUrqlClient";
 import { useStyletron } from "baseui";
 import { Gradient } from "react-gradient";
 import { Code } from "../components/survey_components/Code";
+import { useRouter } from "next/router";
 
 const Index = () => {
   const [{ data, fetching }] = usePostsQuery({
     variables: { limit: 10 },
   });
+  const router = useRouter();
   const [css] = useStyletron();
-
+  console.log(router);
   return (
     <Layout>
       {/* <NextLink href="/create-post">
@@ -22,8 +24,6 @@ const Index = () => {
       </NextLink> */}
 
       <Block>
-        <Code />
-
         <Gradient
           gradients={[["#A0BFF9", "#5B91F4"]]}
           property="background"

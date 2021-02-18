@@ -58,11 +58,7 @@ export const register: React.FC<registerProps> = ({}) => {
             <InputField name="username" label="Username *" />
             <InputField name="email" label="Email*" />
             <InputField name="password" label="Password*" type="password" />
-            <InputField
-              name="org"
-              label="Institution/Company name "
-              type="password"
-            />
+            <InputField name="org" label="Institution/Company name " />
             <Button type="submit" isLoading={isSubmitting}>
               Register
             </Button>

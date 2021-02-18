@@ -4,6 +4,8 @@ import { Button } from "baseui/button";
 import { List } from "baseui/dnd-list";
 import { FormControl } from "baseui/form-control";
 import { ChevronDown, ChevronRight, Plus } from "baseui/icon";
+import { Spinner } from "baseui/spinner";
+
 import { Input, InputProps } from "baseui/input";
 import { StyledLink } from "baseui/link";
 import { NestedMenus, StatefulMenu } from "baseui/menu";
@@ -162,6 +164,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
   const [activeKey, setActiveKey] = React.useState<any>("0");
   const [activeKey2, setActiveKey2] = React.useState<any>("0");
   const [selectValue, setSelectValue] = React.useState<any>([]);
+  const [loading, setLoading] = useState(true);
 
   const [id, setid] = React.useState("");
 
@@ -175,13 +178,20 @@ const SurveyCreator: React.FC<{}> = ({}) => {
   const [selectedState, setSelectedState] = useState<any>({ "0": false });
   const router = useRouter();
 
+  let query = router.asPath.split("?")[1];
+  let survey = null;
+  console.log(query);
+  if (query !== undefined) {
+    survey = query.substr(7);
+  }
+
   const getData = () => {
     let config = {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     };
-    if (typeof router.query.survey === "string") {
+    if (typeof survey === "string") {
       const response = async () => {
         const response = await axios
           .get(
@@ -189,13 +199,16 @@ const SurveyCreator: React.FC<{}> = ({}) => {
               JSON.parse(localStorage.getItem("user") as string).id
             }&email=${
               JSON.parse(localStorage.getItem("user") as string).email
-            }&id=${router.query.survey}`,
+            }&id=${survey}`,
             config
           )
           .catch((err) => console.error(err));
 
         if (!response) return;
+        setLoading(false);
+
         if (response.data.share) {
+          setLoading(false);
           setid(response.data.share.uniqueId);
         }
 
@@ -447,7 +460,6 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                       parseInt((node.id as string).split("-")[1])
                     );
                     setCurrentPage(parseInt((node.id as string).split("-")[0]));
-                    setActiveKey("1");
                   }
                   const n: any = {};
                   n[`${node.id}`] = !expandedState[`${node.id}`];
@@ -458,6 +470,29 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                 }}
               />
             </Tab>
+          </Tabs>
+        </Block>
+      </Block>
+
+      <Block
+        position="fixed"
+        right="0"
+        marginLeft="0px"
+        width="240px"
+        overflow-wrap="break-word"
+        word-wrap="break-word"
+        height="100%"
+        overflow="scroll"
+        overflow-y="scroll"
+        overflow-x="hidden"
+      >
+        <Block>
+          <Tabs
+            onChange={({ activeKey }) => {
+              setActiveKey2(activeKey);
+            }}
+            activeKey={activeKey2}
+          >
             <Tab title="Properties">
               <Block>
                 <Label2>Page:</Label2>
@@ -560,29 +595,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                 ) : null}
               </Block>
             </Tab>
-          </Tabs>
-        </Block>
-      </Block>
 
-      <Block
-        position="fixed"
-        right="0"
-        marginLeft="0px"
-        width="240px"
-        overflow-wrap="break-word"
-        word-wrap="break-word"
-        height="100%"
-        overflow="scroll"
-        overflow-y="scroll"
-        overflow-x="hidden"
-      >
-        <Block>
-          <Tabs
-            onChange={({ activeKey }) => {
-              setActiveKey2(activeKey);
-            }}
-            activeKey={activeKey2}
-          >
             <Tab title="Sharing">
               <Block>
                 <Label3 $style={{ marginBottom: "10px", marginTop: "10px" }}>
@@ -601,7 +614,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                         )}`,
                       },
                     };
-                    const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/Share`;
+                    const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/Share`;
                     let type = 1;
                     if ((params.option as any).label == "Private") {
                       type = 2;
@@ -622,106 +635,121 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           </Tabs>
         </Block>
       </Block>
-      <Block
-        marginTop="35px"
-        width="70%"
-        display="flex"
-        justifyContent="center"
-        margin="0 auto"
-      >
-        <Breadcrumbs>
-          {surveyState.map((p: any, index: any) => {
-            return index == currentPage ? (
-              <span>{p.name}</span>
-            ) : (
-              <StyledLink
-                onClick={() => {
-                  const n: any = {};
-                  n[`${currentPage}`] = false;
-                  n[`${currentPage}-${currentElement}`] = false;
-                  n[`${index}`] = true;
-                  setSelectedState({ ...selectedState, ...n });
-                  setCurrentElemenet(undefined);
-                  setCurrentPage(index);
+
+      {!loading ? (
+        <Block>
+          <Block
+            marginTop="35px"
+            width="70%"
+            display="flex"
+            justifyContent="center"
+            margin="0 auto"
+          >
+            <Breadcrumbs>
+              {surveyState.map((p: any, index: any) => {
+                return index == currentPage ? (
+                  <span>{p.name}</span>
+                ) : (
+                  <StyledLink
+                    onClick={() => {
+                      const n: any = {};
+                      n[`${currentPage}`] = false;
+                      n[`${currentPage}-${currentElement}`] = false;
+                      n[`${index}`] = true;
+                      setSelectedState({ ...selectedState, ...n });
+                      setCurrentElemenet(undefined);
+                      setCurrentPage(index);
+                    }}
+                    id={index}
+                  >
+                    {p.name}
+                  </StyledLink>
+                );
+              })}
+            </Breadcrumbs>
+          </Block>
+          <Block
+            width="60%"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            margin="0 auto"
+          >
+            <div style={{ overflow: "hidden" }}>
+              <List
+                items={surveyState[currentPage].components}
+                removable
+                removableByMove
+                overrides={{
+                  Label: {
+                    component: CustomDragHandle,
+                  },
                 }}
-                id={index}
-              >
-                {p.name}
-              </StyledLink>
-            );
-          })}
-        </Breadcrumbs>
-      </Block>
+                onChange={({ oldIndex, newIndex }) => {
+                  if (currentElement == oldIndex) {
+                    setCurrentElemenet(newIndex);
+                  }
 
-      <Block
-        width="60%"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        margin="0 auto"
-        overflow="hidden"
-      >
-        <List
-          items={surveyState[currentPage].components}
-          removable
-          removableByMove
-          overrides={{
-            Label: {
-              component: CustomDragHandle,
-            },
-          }}
-          onChange={({ oldIndex, newIndex }) => {
-            if (currentElement == oldIndex) {
-              setCurrentElemenet(newIndex);
-            }
-            if (oldIndex === currentElement && newIndex === -1) {
-              const n: any = {};
-              n[`${currentPage}`] = false;
-              n[`${currentPage}-${currentElement}`] = false;
-              setSelectedState({ ...selectedState, ...n });
-              setCurrentElemenet(undefined);
-            }
+                  if (oldIndex === currentElement && newIndex === -1) {
+                    const n: any = {};
+                    n[`${currentPage}`] = false;
+                    n[`${currentPage}-${currentElement}`] = false;
+                    setSelectedState({ ...selectedState, ...n });
+                    setCurrentElemenet(undefined);
+                  }
 
-            if (
-              currentElement &&
-              oldIndex < currentElement &&
-              newIndex >= currentElement
-            ) {
-              const n: any = {};
-              n[`${currentPage}-${currentElement}`] = false;
-              n[`${currentPage}-${currentElement - 1}`] = true;
-              setSelectedState({ ...selectedState, ...n });
-              setCurrentElemenet(currentElement - 1);
-            }
+                  if (
+                    currentElement &&
+                    oldIndex < currentElement &&
+                    newIndex >= currentElement
+                  ) {
+                    const n: any = {};
+                    n[`${currentPage}-${currentElement}`] = false;
+                    n[`${currentPage}-${currentElement - 1}`] = true;
+                    setSelectedState({ ...selectedState, ...n });
+                    setCurrentElemenet(currentElement - 1);
+                  }
 
-            if (
-              currentElement &&
-              oldIndex > currentElement &&
-              newIndex <= currentElement
-            ) {
-              const n: any = {};
-              n[`${currentPage}-${currentElement}`] = false;
-              n[`${currentPage}-${currentElement + 1}`] = true;
-              setSelectedState({ ...selectedState, ...n });
-              setCurrentElemenet(currentElement + 1);
-            }
+                  if (
+                    currentElement &&
+                    oldIndex > currentElement &&
+                    newIndex <= currentElement
+                  ) {
+                    const n: any = {};
+                    n[`${currentPage}-${currentElement}`] = false;
+                    n[`${currentPage}-${currentElement + 1}`] = true;
+                    setSelectedState({ ...selectedState, ...n });
+                    setCurrentElemenet(currentElement + 1);
+                  }
 
-            const newState =
-              newIndex === -1
-                ? remove(surveyState[currentPage].components, oldIndex)
-                : move(surveyState[currentPage].components, oldIndex, newIndex);
+                  const newState =
+                    newIndex === -1
+                      ? remove(surveyState[currentPage].components, oldIndex)
+                      : move(
+                          surveyState[currentPage].components,
+                          oldIndex,
+                          newIndex
+                        );
 
-            setSurveyState([
-              ...surveyState.slice(0, currentPage),
-              {
-                ...surveyState[currentPage],
-                components: [...newState],
-              },
-              ...surveyState.slice(currentPage + 1),
-            ]);
-          }}
-        />
-      </Block>
+                  setSurveyState([
+                    ...surveyState.slice(0, currentPage),
+                    {
+                      ...surveyState[currentPage],
+                      components: [...newState],
+                    },
+                    ...surveyState.slice(currentPage + 1),
+                  ]);
+                }}
+              />
+            </div>
+          </Block>
+        </Block>
+      ) : (
+        <Block display="flex" marginTop="17%" justifyContent="center">
+          <Spinner size={96} />
+        </Block>
+      )}
+
       <Button
         $style={{
           position: "absolute",
@@ -755,7 +783,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           };
-          const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/questions`;
+          const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/questions`;
 
           const response = await axios.post(link, { ...question }, config);
         }}

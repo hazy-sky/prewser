@@ -38,15 +38,21 @@ export const Viewer: React.FC<ViewerProps> = ({ state, answers }) => {
       text-align="center"
       justifyContent="center"
       margin="0 auto"
-      marginTop="12%"
+      marginTop="5%"
     >
-      <Label1>{(state as any).name}</Label1>
+      <Label1 $style={{ textAlign: "center", marginBottom: "50px" }}>
+        {(state as any).name}
+      </Label1>
       {(state as any).components.map((element) => {
-        return getComp(
-          JSON.parse(element).type,
-          JSON.parse(element).label,
-          JSON.parse(element).default,
-          JSON.parse(element).extra
+        return (
+          <Block marginBottom="40px">
+            {getComp(
+              JSON.parse(element).type,
+              JSON.parse(element).label,
+              JSON.parse(element).default,
+              JSON.parse(element).extra
+            )}
+          </Block>
         );
       })}
     </Block>

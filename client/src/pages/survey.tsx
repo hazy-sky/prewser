@@ -59,7 +59,7 @@ const Survey: React.FC<{}> = ({}) => {
           counter += 1;
           if (newState[parseInt(question.pageNumber)] === undefined) {
             newState.push({
-              name: `page ${question.pageNumber}`,
+              name: `Page ${question.pageNumber}`,
               components: [],
             });
           }
@@ -87,13 +87,20 @@ const Survey: React.FC<{}> = ({}) => {
 
   return !error ? (
     !loading ? (
-      <Block marginTop="8%" width="60%" margin="0 auto">
+      <Block marginTop="5%" width="60%" margin="0 auto">
         <Block text-align="center" marginTop="0">
-          {currentPage == 0 ? <H1>{name}</H1> : null}
-          {currentPage == 0 ? <Label1>{description}</Label1> : null}
+          <Block>
+            {currentPage == 0 ? <H1>{name}</H1> : null}
+            {currentPage == 0 ? <Label1>{description}</Label1> : null}
+          </Block>
           <Viewer answers={answers} state={surveyState[currentPage]}></Viewer>
 
-          <Block display="flex" justifyContent="space-around" marginTop="100px">
+          <Block
+            display="flex"
+            marginTop="4%"
+            justifyContent="space-around"
+            marginBottom="100px"
+          >
             <Button
               $style={{
                 display: currentPage > 0 ? "block" : "none",
@@ -128,7 +135,7 @@ const Survey: React.FC<{}> = ({}) => {
         </Block>
       </Block>
     ) : (
-      <Block marginTop="15%" width="60%" margin="0 auto">
+      <Block marginBottom="15%" width="60%" margin="0 auto">
         <Block text-align="center">
           <Spinner size={96} />
         </Block>

@@ -14,12 +14,14 @@ import React, { InputHTMLAttributes } from "react";
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   name: string;
+  type?: string;
   textarea?: boolean;
   placeholder?: boolean;
 };
 
 export const InputField: React.FC<InputFieldProps> = ({
   label,
+  type,
   textarea,
   size: _,
   placeholder,
@@ -33,7 +35,12 @@ export const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <FormControl label={() => label} error={() => error} caption={() => ""}>
-      <Input placeholder={placeholder} {...field} id={field.name} />
+      <Input
+        type={type == "password" ? "password" : null}
+        placeholder={placeholder}
+        {...field}
+        id={field.name}
+      />
     </FormControl>
   );
 
