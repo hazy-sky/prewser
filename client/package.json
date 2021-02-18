@@ -39,6 +39,7 @@
     "axios": "^0.21.1",
     "baseui": "^9.110.0",
     "codemirror": "^5.59.2",
+    "codemirror-record": "^1.0.0",
     "easystarjs": "^0.4.3",
     "email-validator": "^2.0.4",
     "fast-simplex-noise": "^3.2.1",

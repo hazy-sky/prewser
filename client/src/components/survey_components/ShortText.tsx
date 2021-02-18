@@ -1,12 +1,16 @@
 import { Block } from "baseui/block";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
-import React from "react";
+import React, { useEffect } from "react";
 
 export const ShortText = ({ label }: { label: any }) => {
   // const {
   //   connectors: { drag },
   // } = useNode();
+
+  useEffect(() => {
+    console.log(label);
+  }, []);
 
   return (
     <Block
@@ -17,13 +21,7 @@ export const ShortText = ({ label }: { label: any }) => {
       justifyContent="center"
       margin="0 auto"
     >
-      <FormControl
-        label={() => {
-          label;
-        }}
-        error={() => ""}
-        caption={() => ""}
-      >
+      <FormControl label={() => label} error={() => ""} caption={() => ""}>
         <Input />
       </FormControl>
     </Block>

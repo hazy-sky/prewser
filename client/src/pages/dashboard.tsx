@@ -104,17 +104,6 @@ const Dashboard: React.FC<{}> = ({}) => {
                       config
                     )
                     .catch((error) => console.log(error));
-                  const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${router.query.survey}/Share`;
-                  let type = 1;
-                  if (privacy) {
-                    type = 2;
-                  }
-                  const response2 = await axios.post(
-                    link,
-                    { privacyType: type, emails: [] },
-                    config
-                  );
-                  console.log(response2);
                   setNumS(numS + 1);
                   close();
                 }}

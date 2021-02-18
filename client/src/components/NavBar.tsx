@@ -51,33 +51,35 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   } else {
     body = (
-      <AppNavBar
-        title="Survlow"
-        mainItems={mainItems}
-        onMainItemSelect={(item) => {
-          setMainItems((prev) => setItemActive(prev, item));
-          if (item.label == "Dashboard") {
-            router.push("/dashboard");
+      <Block>
+        <AppNavBar
+          title="Survlow"
+          mainItems={mainItems}
+          onMainItemSelect={(item) => {
+            setMainItems((prev) => setItemActive(prev, item));
+            if (item.label == "Dashboard") {
+              router.push("/dashboard");
+            }
+          }}
+          username={
+            !isServer()
+              ? JSON.parse(localStorage.getItem("user") as string).firstName
+              : ""
           }
-        }}
-        username={
-          !isServer()
-            ? JSON.parse(localStorage.getItem("user") as string).firstName
-            : ""
-        }
-        usernameSubtitle={
-          !isServer()
-            ? JSON.parse(localStorage.getItem("user") as string).email
-            : ""
-        }
-        userItems={[{ label: "Settings" }, { label: "Logout" }]}
-        onUserItemSelect={(item) => {
-          if (item.label == "Logout") {
-            localStorage.removeItem("token");
-            router.push("/");
+          usernameSubtitle={
+            !isServer()
+              ? JSON.parse(localStorage.getItem("user") as string).email
+              : ""
           }
-        }}
-      />
+          userItems={[{ label: "Settings" }, { label: "Logout" }]}
+          onUserItemSelect={(item) => {
+            if (item.label == "Logout") {
+              localStorage.removeItem("token");
+              router.push("/");
+            }
+          }}
+        />
+      </Block>
     );
   }
 

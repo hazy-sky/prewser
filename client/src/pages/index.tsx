@@ -7,6 +7,7 @@ import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { useStyletron } from "baseui";
 import { Gradient } from "react-gradient";
+import { Code } from "../components/survey_components/Code";
 
 const Index = () => {
   const [{ data, fetching }] = usePostsQuery({
@@ -19,7 +20,10 @@ const Index = () => {
       {/* <NextLink href="/create-post">
         <Link>Create Post</Link>
       </NextLink> */}
+
       <Block>
+        <Code />
+
         <Gradient
           gradients={[["#A0BFF9", "#5B91F4"]]}
           property="background"

@@ -211,7 +211,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           counter += 1;
           if (newState[parseInt(question.pageNumber)] === undefined) {
             newState.push({
-              name: `page ${question.pageNumber}`,
+              name: `Page ${question.pageNumber}`,
               components: [],
             });
           }
@@ -333,9 +333,9 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           content={({ close }) => (
             <NestedMenus>
               <StatefulMenu
-                items={[{ label: "Add page" }, { label: "Add component" }]}
+                items={[{ label: "Add Page" }, { label: "Add component" }]}
                 onItemSelect={async (item) => {
-                  if (item.item.label === "Add page") {
+                  if (item.item.label === "Add Page") {
                     setSurveyState([
                       ...surveyState,
                       {
@@ -424,7 +424,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
               <TreeView
                 data={mapState(surveyState)}
                 onToggle={async (node) => {
-                  if ((node.label as string).includes("page")) {
+                  if ((node.label as string).includes("Page")) {
                     const n: any = {};
                     n[`${currentPage}`] = false;
                     n[`${currentPage}-${currentElement}`] = false;
