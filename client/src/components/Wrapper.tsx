@@ -11,7 +11,7 @@ export const Wrapper: React.FC<WrapperProps> = ({
 }) => {
   return (
     <Block
-      width="40%"
+      width="60%"
       display="flex"
       flexDirection="column"
       text-align="center"

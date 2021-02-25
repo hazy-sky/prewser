@@ -18,15 +18,20 @@ export const Viewer: React.FC<ViewerProps> = ({ state, answers }) => {
     type: string,
     label: string,
     defaults: string,
-    extra: string
+    extra: string,
+    id: string
   ) => {
     const compsIds: any = {
-      "Multiple Choices": <MultipleChoice label={label} />,
-      "Short Text": <ShortText label={label} />,
-      "Long Text": <LongText label={label} />,
-      Code: <Code />,
-      Statement: <PlainText label={label} />,
-      Email: <Email label={label} defaults={defaults} />,
+      "Multiple Choices": (
+        <MultipleChoice label={label} extra={extra} answers={answers} />
+      ),
+      "Short Text": <ShortText id={id} label={label} answers={answers} />,
+      "Long Text": <LongText id={id} label={label} answers={answers} />,
+      Code: <Code id={id} extra={extra} answers={answers} />,
+      Statement: <PlainText id={id} label={label} answers={answers} />,
+      Email: (
+        <Email id={id} label={label} defaults={defaults} answers={answers} />
+      ),
     };
     return compsIds[type];
   };
@@ -50,7 +55,8 @@ export const Viewer: React.FC<ViewerProps> = ({ state, answers }) => {
               JSON.parse(element).type,
               JSON.parse(element).label,
               JSON.parse(element).default,
-              JSON.parse(element).extra
+              JSON.parse(element).extra,
+              JSON.parse(element).id
             )}
           </Block>
         );

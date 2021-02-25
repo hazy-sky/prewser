@@ -2,7 +2,15 @@ import { Block } from "baseui/block";
 import { H1 } from "baseui/typography";
 import React from "react";
 
-export const PlainText = ({ label }: { label: string }) => {
+export const PlainText = ({
+  label,
+  answers,
+  id,
+}: {
+  label: string;
+  answers?: any;
+  id?: any;
+}) => {
   // const {
   //   connectors: { drag },
   // } = useNode();

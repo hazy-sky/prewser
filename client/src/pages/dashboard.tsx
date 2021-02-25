@@ -71,7 +71,20 @@ const Dashboard: React.FC<{}> = ({}) => {
                 >
                   Edit
                 </Button>
-                <Button>Remove</Button>
+                <Button
+                  onClick={() => {
+                    axios
+                      .delete(
+                        `https://survey-manager-v1.herokuapp.com/api/Surveys/${response.data[i].id}`,
+                        config
+                      )
+                      .then(() => {
+                        setNumS(numS + 1);
+                      });
+                  }}
+                >
+                  Remove
+                </Button>
               </ButtonGroup>
             </Block>,
           ]);
@@ -142,18 +155,28 @@ const Dashboard: React.FC<{}> = ({}) => {
         </StatefulPopover>
       </Block>
       <Table
-        columns={["Name", "description", "Number of Submissions", "Actions"]}
+        columns={[
+          "Survey Name",
+          "Description",
+          "Number of Responses",
+          "Actions",
+        ]}
         data={[...surveys]}
       />
       <Block marginTop="40px" marginBottom="200px">
         <Table
-          columns={["Templates", "Actions"]}
+          columns={["Templates"]}
           data={[
             [
-              <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
+              <Label2
+                $style={{
+                  textAlign: "center",
+                  paddingTop: "10px",
+                  paddingBottom: "10px",
+                }}
+              >
                 Exam
               </Label2>,
-              <Button>Use</Button>,
             ],
           ]}
         />

@@ -3,7 +3,15 @@ import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import React, { useEffect } from "react";
 
-export const ShortText = ({ label }: { label: any }) => {
+export const ShortText = ({
+  label,
+  answers,
+  id,
+}: {
+  label: any;
+  answers?: any;
+  id?: any;
+}) => {
   // const {
   //   connectors: { drag },
   // } = useNode();

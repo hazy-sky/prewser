@@ -41,42 +41,38 @@ const Survey: React.FC<{}> = ({}) => {
     if (!query) return;
     if (!id) setError(true);
 
+    const newState = [];
+
     axios
       .get(`https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${id}`)
-      .then((response) => {
-        console.log(response);
-        if (!response) return;
-        setName(response.data.title);
-        setDescription(response.data.description);
-        setLoading(false);
-        let counter = 0;
-        const newState: any = [];
-        console.log(response);
-        response.data.questions.forEach((question: any) => {
-          if (counter > 20) {
-            return;
-          }
-          counter += 1;
-          if (newState[parseInt(question.pageNumber)] === undefined) {
-            newState.push({
-              name: `Page ${question.pageNumber}`,
-              components: [],
-            });
-          }
+      .then((spage) => {
+        console.log("spage");
+        console.log(spage);
+        setName((spage as any).data.title);
+        setDescription((spage as any).data.description);
+
+        (spage as any).data.pages.forEach((page: any) => {
+          newState.push({ name: page.title, components: [] });
           console.log("gg");
-          newState[parseInt(question.pageNumber)].components.push(
-            JSON.stringify({
-              type: idsComps[`${question.typeId}`],
-              label: question.title,
-              default: "",
-              extra: "",
-              selected: false,
-            })
-          );
+          console.log(page);
+          if (page.questions)
+            page.questions.forEach((question) => {
+              newState[parseInt(page.order)].components.push(
+                JSON.stringify({
+                  type: idsComps[`${question.typeId}`],
+                  label: question.title,
+                  default: "",
+                  extra: JSON.parse(question.answerSchema),
+                  selected: false,
+                  id: question.id,
+                })
+              );
+            });
         });
 
+        setLoading(false);
+
         if (newState.length > 0) {
-          console.log(newState);
           setSurveyState(newState);
         } else {
           return [{ name: "Page 0", components: [] }];
@@ -84,6 +80,14 @@ const Survey: React.FC<{}> = ({}) => {
       })
       .catch((err) => setError(true));
   }, []);
+
+  const submit = () => {
+    const requestb = { answers: answers, extraDetails: "string", uid: id };
+    axios.post(
+      "https://survey-manager-v1.herokuapp.com/api/Surveys/results",
+      requestb
+    );
+  };
 
   return !error ? (
     !loading ? (

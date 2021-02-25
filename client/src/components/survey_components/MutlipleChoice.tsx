@@ -14,12 +14,25 @@ import { Block } from "baseui/block";
 import { Navigation } from "baseui/side-navigation";
 import { Canvas, useNode } from "@craftjs/core";
 
-export const MultipleChoice = ({ label }: { label: string }) => {
-  const [value, setValue] = React.useState("2");
+export const MultipleChoice = ({
+  label,
+  extra,
+  answers,
+  id,
+}: {
+  label: string;
+  extra: any;
+  answers?: any;
+  id?: any;
+}) => {
+  const [value, setValue] = React.useState("1");
   // const {
   //   connectors: { drag },
   // } = useNode();
 
+  const choices = extra.Choices.split(",");
+
+  console.log();
   return (
     <Block
       width="70%"
@@ -35,11 +48,9 @@ export const MultipleChoice = ({ label }: { label: string }) => {
         name="number"
         align={ALIGN.vertical}
       >
-        <Radio value="1">One</Radio>
-        <Radio value="2" description="This is a radio description">
-          Two
-        </Radio>
-        <Radio value="3">Three</Radio>
+        {choices.map((element, key) => {
+          return <Radio value={`${parseInt(key)}`}>{element}</Radio>;
+        })}
       </RadioGroup>
     </Block>
   );

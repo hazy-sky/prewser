@@ -24,9 +24,13 @@ function Negative() {
 export const Email = ({
   label,
   defaults,
+  answers,
+  id,
 }: {
   label: string;
   defaults: string;
+  answers?: any;
+  id?: any;
 }) => {
   // const {
   //   connectors: { drag },

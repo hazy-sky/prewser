@@ -25,15 +25,22 @@ export const register: React.FC<registerProps> = ({}) => {
   return (
     <Wrapper varient="small">
       <Formik
-        initialValues={{ email: "", username: "", password: "", org: "" }}
+        initialValues={{
+          email: "",
+          firstName: "",
+          lastName: "",
+          password: "",
+          org: "",
+        }}
         onSubmit={async (values, { setErrors }) => {
           console.log(values);
           const response = await axios
             .post("https://survey-manager-v1.herokuapp.com/api/Users", {
-              firstName: values.username,
-              lastName: values.org,
+              firstName: values.firstName,
+              lastName: values.lastName,
               email: values.email,
               password: values.password,
+              companyName: values.org,
             })
             .catch((err) => console.log(err));
           router.push("/login");
@@ -55,7 +62,8 @@ export const register: React.FC<registerProps> = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField name="username" label="Username *" />
+            <InputField name="firstName" label="First Name *" />
+            <InputField name="lastName" label="Last Name *" />
             <InputField name="email" label="Email*" />
             <InputField name="password" label="Password*" type="password" />
             <InputField name="org" label="Institution/Company name " />

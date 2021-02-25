@@ -3,7 +3,15 @@ import { Textarea, TextareaProps } from "baseui/textarea";
 import { Label3 } from "baseui/typography";
 import React from "react";
 
-export const LongText = ({ label }: { label: string }) => {
+export const LongText = ({
+  label,
+  answers,
+  id,
+}: {
+  label: string;
+  answers?: any;
+  id?: any;
+}) => {
   // const {
   //   connectors: { drag },
   // } = useNode();

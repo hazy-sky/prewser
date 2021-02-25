@@ -1,4 +1,4 @@
-import { faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useStyletron } from "baseui";
@@ -11,6 +11,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import { isServer } from "../../utils/isServer";
 import socketIOClient from "socket.io-client";
 import { v4 } from "uuid";
+import { Spinner } from "baseui/spinner";
 
 let CodePlay = null;
 let CodeRecord = null;
@@ -32,10 +33,13 @@ const endpoint = "http://140.82.47.62/";
 const socket = socketIOClient(endpoint);
 
 interface CodeProps {
-  varient?: "small" | "regular";
+  label?: any;
+  extra?: any;
+  answers?: any;
+  id?: any;
 }
 
-export const Code: React.FC<CodeProps> = () => {
+export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
   // const {
   //   connectors: { drag },
   // } = useNode();
@@ -51,6 +55,11 @@ export const Code: React.FC<CodeProps> = () => {
   const [recorder, setRecorder] = useState<any>("");
   const [output, setOutput] = useState(``);
   const [code, setCode] = useState("");
+  const [fullscreen, setFullscreen] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sessid = v4();
 
   useEffect(() => {
     socket.on("connection:sid", function (socketId) {
@@ -58,105 +67,131 @@ export const Code: React.FC<CodeProps> = () => {
     });
   }, []);
 
+  const stop = () => {
+    axios
+      .post("http://140.82.47.62/stop", {
+        sessid: sessid,
+      })
+      .then(() => {
+        setIsLoading(false);
+        setRunning(false);
+      });
+  };
+
+  const start = () => {
+    setIsLoading(true);
+    setRunning(true);
+    setOutput("");
+    axios
+      .post("http://140.82.47.62/session", {
+        sessid: sessid,
+        code: code,
+        socketId: socketId,
+        language: "Java",
+        languageExt: "java",
+      })
+      .then((res) => {
+        if (res.data === "done") {
+          setRunning(false);
+        }
+        setIsLoading(false);
+      });
+
+    let outputs = [""];
+    socket.on("output", (msg) => {
+      console.log(msg);
+      outputs.push(msg);
+      setTimeout(() => setOutput(output + outputs.join("")), 100);
+    });
+
+    socket.on("error", (msg) => {
+      setIsLoading(false);
+      outputs.push(msg);
+      setTimeout(() => setOutput(output + outputs.join("")), 100);
+    });
+
+    socket.on("running", (msg) => {
+      setIsLoading(false);
+    });
+  };
+
   return (
     <Block
       // ref={drag}
-      width="70%"
-      display="flex"
-      flexDirection="column"
+
+      width={!fullscreen ? "70%" : "100%"}
+      display={!fullscreen ? "flex" : "block"}
+      flexDirection={!fullscreen ? "column" : "initial"}
       justifyContent="center"
       margin="0 auto"
     >
-      <Tabs
-        activeKey={activeKey}
-        onChange={({ activeKey }: { activeKey: any }) => {
-          setActiveKey(activeKey);
-        }}
-        activateOnFocus
-      >
-        <Tab title="Code">
-          <Block position="relative">
-            <CodeMirror
-              value={code}
-              options={{
-                fullscreen: true,
-                mode: "text/x-java",
-                autocompletion: true,
-                highlightSelectionMatches: true,
-                styleActiveLine: true,
-                autoCloseTags: true,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                theme: "3024-day",
-                lineNumbers: true,
-              }}
-              onChange={(editor, data, value) => {
-                setCode(value);
-              }}
-              editorDidMount={(editors) => {
-                const codeRecorder = new CodeRecord(editors);
-                codeRecorder.listen();
-                // setInterval(() => {
-                //   let records = codeRecorder.getRecords();
-                //   // console.log(records);
-                // }, 1000);
-              }}
-            />
-            <Block
-              position="absolute"
-              bottom="0"
-              right="0"
-              marginBottom="10px"
-              marginRight="10px"
-              vertical-align="text-bottom"
-              z-index="3"
-            >
-              <Button
-                kind={KIND.secondary}
-                shape="circle"
-                onClick={() => {
-                  axios
-                    .post("http://140.82.47.62/session", {
-                      sessid: v4(),
-                      code: code,
-                      socketId: socketId,
-                      language: "Java",
-                      languageExt: "java",
-                    })
-                    .then((response) => {
-                      console.log(response);
-                    });
+      <Block>
+        <CodeMirror
+          value=""
+          options={{
+            fullscreen: true,
+            mode: "text/x-java",
+            autocompletion: true,
+            highlightSelectionMatches: true,
+            styleActiveLine: true,
+            autoCloseTags: true,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            theme: "bespin",
+            lineNumbers: true,
+          }}
+          onChange={(editor, data, value) => {
+            setCode(value);
+          }}
+          editorDidMount={(editors) => {
+            editors.setValue("asdf");
+            const codeRecorder = new CodeRecord(editors);
+            editors.setOption("fullScreen", fullscreen);
+            codeRecorder.listen();
 
-                  setOutput("");
-                  let outputs = [""];
-                  socket.on("output", (msg) => {
-                    console.log(msg);
-                    outputs.push(msg);
-                    setTimeout(() => setOutput(output + outputs.join("")), 100);
-                  });
-                }}
-              >
-                <FontAwesomeIcon icon={faPlay} style={{ marginLeft: "3px" }} />
-              </Button>
-            </Block>
-          </Block>
-        </Tab>
-        <Tab title="Output">
-          <Block
-            overflow-wrap="break-word"
-            word-wrap="break-word"
-            backgroundColor={theme.colors.inputFill}
-            height="400px"
-            overflow-y="scroll"
+            // setInterval(() => {
+            //   let records = codeRecorder.getRecords();
+            //   // console.log(records);
+            // }, 1000);
+          }}
+        />
+        <Block
+          bottom="0"
+          right="0"
+          marginBottom="10px"
+          marginRight="10px"
+          vertical-align="text-bottom"
+          z-index="3"
+        >
+          <Button
+            kind={KIND.secondary}
+            shape="circle"
+            onClick={running ? stop : start}
           >
-            <div style={{ overflow: "scroll", height: "100%" }}>
-              <Paragraph3 margin="0" padding="12px">
-                {output}
-              </Paragraph3>
-            </div>
-          </Block>
-        </Tab>
-      </Tabs>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <FontAwesomeIcon
+                icon={running ? faStop : faPlay}
+                style={{ marginLeft: "3px" }}
+              />
+            )}
+          </Button>
+        </Block>
+      </Block>
+      <Block
+        overflow-wrap="break-word"
+        word-wrap="break-word"
+        backgroundColor={theme.colors.inputFill}
+        height="400px"
+        overflow-y="scroll"
+      >
+        <div style={{ overflow: "scroll", height: "100%" }}>
+          <Paragraph3 margin="0" padding="12px">
+            {output}
+          </Paragraph3>
+        </div>
+      </Block>
     </Block>
   );
 };

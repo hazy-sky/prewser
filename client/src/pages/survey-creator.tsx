@@ -61,6 +61,11 @@ const idsComps: any = {
   "6": "Email",
 };
 
+const extraComp: any = {
+  "Multiple Choices": { Choices: "" },
+  Code: { Language: "", mainEntry: "" },
+};
+
 function move(
   arr: Array<string | undefined>,
   old_index: number,
@@ -100,7 +105,7 @@ const CustomDragHandle = (props: any) => {
       element = <PlainText label={newob.label} />;
       break;
     case "Multiple Choices":
-      element = <MultipleChoice label={newob.label} />;
+      element = <MultipleChoice extra={newob.extra} label={newob.label} />;
       break;
     case "Short Text":
       element = <ShortText label={newob.label} />;
@@ -109,7 +114,7 @@ const CustomDragHandle = (props: any) => {
       element = <LongText label={newob.label} />;
       break;
     case "Code":
-      element = <Code />;
+      element = <Code label={newob.label} extra={newob.extra} />;
       break;
   }
 
@@ -193,59 +198,49 @@ const SurveyCreator: React.FC<{}> = ({}) => {
     };
     if (typeof survey === "string") {
       const response = async () => {
-        const response = await axios
+        const newState: any = [];
+
+        axios
           .get(
-            `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?uid=${
-              JSON.parse(localStorage.getItem("user") as string).id
-            }&email=${
-              JSON.parse(localStorage.getItem("user") as string).email
-            }&id=${survey}`,
+            `https://survey-manager-v1.herokuapp.com/api/Surveys/Get?id=${survey}`,
             config
           )
-          .catch((err) => console.error(err));
+          .then((spage) => {
+            console.log("spage");
+            console.log(spage);
+            if (spage.data.share !== null) {
+              if (spage.data.share.uniqueId !== undefined) {
+                setid(spage.data.share.uniqueId);
+                setSelectValue(privacyTypes[spage.data.privacyType]);
+              }
+            }
 
-        if (!response) return;
-        setLoading(false);
+            (spage as any).data.pages.forEach((page: any) => {
+              newState.push({ name: page.title, components: [] });
+              if (page.questions)
+                page.questions.forEach((question) => {
+                  // answerSchema: JSON.stringify(extra),
 
-        if (response.data.share) {
-          setLoading(false);
-          setid(response.data.share.uniqueId);
-        }
-
-        console.log(response);
-        const newState: any = [];
-        let counter = 0;
-        console.log(response);
-        setSelectValue(privacyTypes[response.data.privacyType]);
-        response.data.questions.forEach((question: any) => {
-          if (counter > 20) {
-            return;
-          }
-          counter += 1;
-          if (newState[parseInt(question.pageNumber)] === undefined) {
-            newState.push({
-              name: `Page ${question.pageNumber}`,
-              components: [],
+                  newState[parseInt(page.order)].components.push(
+                    JSON.stringify({
+                      type: idsComps[`${question.typeId}`],
+                      label: question.title,
+                      default: "",
+                      extra: JSON.parse(question.answerSchema),
+                      selected: false,
+                    })
+                  );
+                });
             });
-          }
-          console.log("gg");
-          newState[parseInt(question.pageNumber)].components.push(
-            JSON.stringify({
-              type: idsComps[`${question.typeId}`],
-              label: question.title,
-              default: "",
-              extra: "",
-              selected: false,
-            })
-          );
-        });
 
-        if (newState.length > 0) {
-          console.log("bb");
-          setSurveyState(newState);
-        } else {
-          return [{ name: "Page 0", components: [] }];
-        }
+            setLoading(false);
+            console.log(newState);
+            if (newState.length > 0) {
+              setSurveyState(newState);
+            } else {
+              return [{ name: "Page 0", components: [] }];
+            }
+          });
       };
       response();
     } else {
@@ -255,6 +250,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
 
   useEffect(() => {
     getData();
+    console.log(surveyState);
   }, []);
 
   const deletePage = () => {
@@ -371,6 +367,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                             <StatefulMenu
                               items={availableComps}
                               onItemSelect={async (item) => {
+                                console.log();
                                 await setSurveyState([
                                   ...surveyState.slice(0, currentPage),
                                   {
@@ -381,7 +378,11 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                                         type: item.item.label,
                                         label: "Label",
                                         default: "",
-                                        extra: "",
+                                        extra:
+                                          extraComp[`${item.item.label}`] !==
+                                          undefined
+                                            ? extraComp[`${item.item.label}`]
+                                            : {},
                                         selected: false,
                                       }),
                                     ],
@@ -495,7 +496,9 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           >
             <Tab title="Properties">
               <Block>
-                <Label2>Page:</Label2>
+                <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
+                  Page:
+                </Label2>
 
                 <FormControl
                   label={() => "Page Name:"}
@@ -517,7 +520,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                   />
                 </FormControl>
                 <StyledLink
-                  style={{
+                  $style={{
                     color: "red",
                   }}
                   onClick={() => {
@@ -528,7 +531,11 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                 </StyledLink>
                 {currentElement != undefined && currentElement >= 0 ? (
                   <>
-                    <Label2>Selected Component:</Label2>
+                    <Label2
+                      $style={{ textAlign: "center", paddingTop: "10px" }}
+                    >
+                      Selected Component:
+                    </Label2>
                     <FormControl
                       label={() => "Label: "}
                       error={() => ""}
@@ -545,6 +552,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                             : ""
                         }
                         onChange={(e) => {
+                          console.log(surveyState);
                           if (currentElement === null || currentElement < 0) {
                             return;
                           }
@@ -572,7 +580,70 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                         }}
                       />
                     </FormControl>
-                    <FormControl
+                    {Object.keys(
+                      JSON.parse(
+                        surveyState[currentPage].components[currentElement]
+                      ).extra
+                    ).map((key, value) => {
+                      return (
+                        <>
+                          <FormControl
+                            label={() => key}
+                            error={() => ""}
+                            caption={() => ""}
+                          >
+                            <Input
+                              value={
+                                currentElement != undefined
+                                  ? JSON.parse(
+                                      surveyState[currentPage].components[
+                                        currentElement
+                                      ]
+                                    ).extra[key]
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                let newElement = JSON.parse(
+                                  surveyState[currentPage].components[
+                                    currentElement
+                                  ]
+                                );
+                                // {...JSON.parse(
+                                //   surveyState[currentPage].components[currentElement]
+                                // ), extra: {...JSON.parse(
+                                //   surveyState[currentPage].components[currentElement]
+                                // ).extra,  }}
+
+                                newElement.extra[
+                                  key
+                                ] = (e.target as InputProps).value;
+
+                                setSurveyState([
+                                  ...surveyState.slice(0, currentPage),
+                                  {
+                                    ...surveyState[currentPage],
+                                    components: [
+                                      ...surveyState[
+                                        currentPage
+                                      ].components.slice(0, currentElement),
+                                      JSON.stringify(newElement),
+                                      ...surveyState[
+                                        currentPage
+                                      ].components.slice(
+                                        (currentElement as number) + 1
+                                      ),
+                                    ],
+                                  },
+                                  ...surveyState.slice(currentPage + 1),
+                                ]);
+                                console.log(newElement);
+                              }}
+                            />
+                          </FormControl>
+                        </>
+                      );
+                    })}
+                    {/* <FormControl
                       label={() => "Default: "}
                       error={() => ""}
                       caption={() => ""}
@@ -590,7 +661,7 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                           ]);
                         }}
                       />
-                    </FormControl>
+                    </FormControl> */}
                   </>
                 ) : null}
               </Block>
@@ -624,12 +695,19 @@ const SurveyCreator: React.FC<{}> = ({}) => {
                       { privacyType: type, emails: [] },
                       config
                     );
+                    setid(response.data.tokens.ALL);
                     console.log(response);
                   }}
                 />
-                <StyledLink href={`http://localhost:3000/survey?id=${id}`}>
-                  Survey
-                </StyledLink>
+                <Button
+                  onClick={() => {
+                    router.push(`survey?id=${id}`);
+                  }}
+                  $style={{ marginTop: "10px", width: "100%" }}
+                >
+                  Go to the survey
+                </Button>
+                <StyledLink>Copy the link</StyledLink>
               </Block>
             </Tab>
           </Tabs>
@@ -759,33 +837,76 @@ const SurveyCreator: React.FC<{}> = ({}) => {
           marginRight: "30px",
         }}
         onClick={async () => {
-          const questions = [];
-          for (let i = 0; i < surveyState.length; i++) {
-            for (let j = 0; j < surveyState[i].components.length; j++) {
-              const { type, label, extra, selected } = JSON.parse(
-                surveyState[i].components[j]
-              );
-
-              questions.push({
-                typeId: compsIds[type],
-                isMain: true,
-                order: j,
-                isActive: true,
-                answerSchema: "extra",
-                pageNumber: i,
-                title: label,
-              });
-            }
-          }
-          const question = { questions: [...questions] };
           let config = {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           };
-          const link = `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/questions`;
 
-          const response = await axios.post(link, { ...question }, config);
+          axios
+            .get(
+              `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/Pages`,
+              config
+            )
+            .then(async (pages) => {
+              (pages as any).data.forEach(async (page) => {
+                await axios.delete(
+                  `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/Pages/${page.id}`,
+                  config
+                );
+              });
+
+              for (let i = 0; i < surveyState.length; i++) {
+                const response = await axios.post(
+                  `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/Pages`,
+                  {
+                    title: surveyState[i].name,
+                    order: i,
+                  },
+                  config
+                );
+              }
+
+              axios
+                .get(
+                  `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/Pages`,
+                  config
+                )
+                .then((pages) => {
+                  for (const page of (pages as any).data) {
+                    const questions = [];
+                    console.log(page);
+
+                    for (
+                      let j = 0;
+                      j < surveyState[page.order].components.length;
+                      j++
+                    ) {
+                      const { type, label, extra, selected } = JSON.parse(
+                        surveyState[page.order].components[j]
+                      );
+
+                      questions.push({
+                        typeId: compsIds[type],
+                        isMain: true,
+                        order: j,
+                        isActive: true,
+                        answerSchema: JSON.stringify(extra),
+                        title: label,
+                      });
+                      console.log(questions);
+                    }
+
+                    const newdata = { questions: [...questions] };
+                    console.log(newdata);
+                    axios.post(
+                      `https://survey-manager-v1.herokuapp.com/api/Surveys/${survey}/questions/${page.id}`,
+                      { ...newdata },
+                      config
+                    );
+                  }
+                });
+            });
         }}
       >
         Save
