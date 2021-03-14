@@ -165,9 +165,9 @@ export const Code: React.FC<CodeProps> = ({
             theme: "bespin",
             lineNumbers: true,
           }}
-          recorder={(c) => {
-            setRecorder(c);
-          }}
+          // recorder={(c) => {
+          //   setRecorder(c);
+          // }}
           onChange={(editor, data, value) => {
             setCode(value);
 

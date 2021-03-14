@@ -53,7 +53,7 @@ export const Player = ({ code }: { code: any }) => {
             theme: "bespin",
             lineNumbers: true,
           }}
-          player={(c) => {}}
+          // player={(c) => {}}
           onChange={(editor, data, value) => {}}
           editorDidMount={(editors) => {
             editors.setSize(1000, 500);
