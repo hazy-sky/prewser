@@ -120,7 +120,6 @@ export const Code: React.FC<CodeProps> = ({
         }
         setIsLoading(false);
       });
-    console.log(socketId);
 
     let outputs = [""];
     socket.on("output", (msg) => {
