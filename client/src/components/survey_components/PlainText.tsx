@@ -5,11 +5,13 @@ import React from "react";
 export const PlainText = ({
   label,
   answers,
+  setAnswers,
   id,
 }: {
   label: string;
   answers?: any;
   id?: any;
+  setAnswers?: any;
 }) => {
   // const {
   //   connectors: { drag },

@@ -18,14 +18,16 @@ export const MultipleChoice = ({
   label,
   extra,
   answers,
+  setAnswers,
   id,
 }: {
   label: string;
   extra: any;
   answers?: any;
+  setAnswers?: any;
   id?: any;
 }) => {
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = React.useState("0");
   // const {
   //   connectors: { drag },
   // } = useNode();
@@ -44,7 +46,12 @@ export const MultipleChoice = ({
       <Label3 $style={{ marginBottom: "10px" }}>{label as string}</Label3>
       <RadioGroup
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          let nanswers = { ...answers };
+          nanswers[id] = choices[parseInt(e.target.value)];
+          setAnswers({ ...nanswers });
+          setValue(e.target.value);
+        }}
         name="number"
         align={ALIGN.vertical}
       >

@@ -6,7 +6,7 @@ import { Block } from "baseui/block";
 import { Button, KIND } from "baseui/button";
 import { Tab, Tabs } from "baseui/tabs-motion";
 import { Paragraph3 } from "baseui/typography";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import { isServer } from "../../utils/isServer";
 import socketIOClient from "socket.io-client";
@@ -29,7 +29,7 @@ if (typeof navigator !== "undefined") {
   require("codemirror/mode/javascript/javascript");
 }
 
-const endpoint = "http://140.82.47.62/";
+const endpoint = "https://insituhq.com/";
 const socket = socketIOClient(endpoint);
 
 interface CodeProps {
@@ -37,9 +37,18 @@ interface CodeProps {
   extra?: any;
   answers?: any;
   id?: any;
+  defaults?: any;
+  setAnswers?: any;
 }
 
-export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
+export const Code: React.FC<CodeProps> = ({
+  label,
+  extra,
+  answers,
+  setAnswers,
+  id,
+  defaults,
+}) => {
   // const {
   //   connectors: { drag },
   // } = useNode();
@@ -48,16 +57,22 @@ export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
   //   connectors: { drag },
   // } = useNode();
 
-  let records = useState<any>("");
   const [socketId, setSocketId] = useState("");
 
   const [activeKey, setActiveKey] = React.useState("0");
-  const [recorder, setRecorder] = useState<any>("");
+  const [recorder, setRecorder] = React.useState();
   const [output, setOutput] = useState(``);
   const [code, setCode] = useState("");
   const [fullscreen, setFullscreen] = useState(false);
   const [running, setRunning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  let codemirror = useRef();
+  let getRecords = null;
+
+  let codeRec: any;
+  let runs = {};
+  let bugs = {};
+  let outputs = {};
 
   const sessid = v4();
 
@@ -68,8 +83,9 @@ export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
   }, []);
 
   const stop = () => {
+    //http://140.82.47.62/stop
     axios
-      .post("http://140.82.47.62/stop", {
+      .post("https://insituhq.com/stop", {
         sessid: sessid,
       })
       .then(() => {
@@ -78,16 +94,24 @@ export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
       });
   };
 
+  // const start = () => {
+  //   console.log((recorder as any).getRecords());
+  // };
+
   const start = () => {
     setIsLoading(true);
     setRunning(true);
     setOutput("");
+    // console.log(JSON.parse(recorder));
+    // Code: { Language: "", mainEntry: "" },
+    //http://140.82.47.62/session
     axios
-      .post("http://140.82.47.62/session", {
+      .post("https://insituhq.com/session", {
         sessid: sessid,
         code: code,
         socketId: socketId,
-        language: "Java",
+        language: extra.Language,
+        mainEntry: extra.mainEntry,
         languageExt: "java",
       })
       .then((res) => {
@@ -96,6 +120,7 @@ export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
         }
         setIsLoading(false);
       });
+    console.log(socketId);
 
     let outputs = [""];
     socket.on("output", (msg) => {
@@ -127,6 +152,7 @@ export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
     >
       <Block>
         <CodeMirror
+          ref={codemirror}
           value=""
           options={{
             fullscreen: true,
@@ -140,14 +166,27 @@ export const Code: React.FC<CodeProps> = ({ label, extra, answers, id }) => {
             theme: "bespin",
             lineNumbers: true,
           }}
+          recorder={(c) => {
+            setRecorder(c);
+          }}
           onChange={(editor, data, value) => {
             setCode(value);
+
+            let nanswers = { ...answers };
+            // console.log(nanswers[id]);
+            // if (typeof nanswers[id] === "undefined") {
+            //   nanswers[id] = { track: [] };
+            // }
+
+            // nanswers[id] = {
+            //   track: [...nanswers[id].track, (recorder as any).getRecords()],
+            // };
+
+            setAnswers({ ...nanswers });
           }}
           editorDidMount={(editors) => {
-            editors.setValue("asdf");
-            const codeRecorder = new CodeRecord(editors);
+            editors.setValue("");
             editors.setOption("fullScreen", fullscreen);
-            codeRecorder.listen();
 
             // setInterval(() => {
             //   let records = codeRecorder.getRecords();

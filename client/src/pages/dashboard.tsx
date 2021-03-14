@@ -6,7 +6,7 @@ import { useCreatePostMutation } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { useIsAuth } from "../utils/useIsAuth";
 import { Table } from "baseui/table-semantic";
-import { Button } from "baseui/button";
+import { Button, KIND } from "baseui/button";
 import { Block } from "baseui/block";
 import { ButtonGroup } from "baseui/button-group";
 import { Label2, Label3 } from "baseui/typography";
@@ -36,6 +36,7 @@ const Dashboard: React.FC<{}> = ({}) => {
       .get("https://survey-manager-v1.herokuapp.com/api/Surveys/GetAll", config)
       .then((response) => {
         const newState = [];
+        console.log(response);
         setNumS(response.data.length - 1);
         for (let i = 0; i < response.data.length; i++) {
           // console.log(response.data[i].share);
@@ -44,24 +45,21 @@ const Dashboard: React.FC<{}> = ({}) => {
               {response.data[i].title}
             </Label2>,
             <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
-              {response.data[i].description}
-            </Label2>,
-            <Label2 $style={{ textAlign: "center", paddingTop: "10px" }}>
-              {response.data[i].shareUsers.length}
+              {response.data[i].numberOfResponses}
             </Label2>,
             <Block>
               <ButtonGroup>
-                <Button
-                  onClick={() => {
-                    console.log(response.data[i]);
-                    // router.push(
-                    //   "/survey-creator?survey=" +
-                    //     response.data[i].share.uniqueId
-                    // );
-                  }}
-                >
-                  View
-                </Button>
+                {response.data[i].share !== null ? (
+                  <Button
+                    onClick={() => {
+                      router.push(
+                        "/survey?id=" + response.data[i].share.uniqueId
+                      );
+                    }}
+                  >
+                    View
+                  </Button>
+                ) : null}
                 <Button
                   onClick={() => {
                     router.push(
@@ -70,6 +68,13 @@ const Dashboard: React.FC<{}> = ({}) => {
                   }}
                 >
                   Edit
+                </Button>
+                <Button
+                  onClick={() => {
+                    router.push("/submissions?survey=" + response.data[i].id);
+                  }}
+                >
+                  Submissions
                 </Button>
                 <Button
                   onClick={() => {
@@ -99,7 +104,11 @@ const Dashboard: React.FC<{}> = ({}) => {
       <Block>
         <StatefulPopover
           content={({ close }) => (
-            <Block padding={"30px"}>
+            <Block
+              $style={{ border: "1px solid" }}
+              backgroundColor="white"
+              padding={"30px"}
+            >
               <Formik
                 onSubmit={async (value) => {
                   let config = {
@@ -134,15 +143,6 @@ const Dashboard: React.FC<{}> = ({}) => {
                     >
                       Create
                     </Button>
-                    <Checkbox
-                      checked={privacy}
-                      onChange={(e) => {
-                        setPrivacy((e.target as any).checked);
-                      }}
-                      labelPlacement={LABEL_PLACEMENT.right}
-                    >
-                      Private
-                    </Checkbox>
                   </Form>
                 )}
               </Formik>
@@ -155,12 +155,7 @@ const Dashboard: React.FC<{}> = ({}) => {
         </StatefulPopover>
       </Block>
       <Table
-        columns={[
-          "Survey Name",
-          "Description",
-          "Number of Responses",
-          "Actions",
-        ]}
+        columns={["Survey Name", "Number of Responses", "Actions"]}
         data={[...surveys]}
       />
       <Block marginTop="40px" marginBottom="200px">

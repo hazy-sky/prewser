@@ -3,15 +3,17 @@ import { Block } from "baseui/block";
 
 interface WrapperProps {
   varient?: "small" | "regular" | "home";
+  size?: any;
 }
 
 export const Wrapper: React.FC<WrapperProps> = ({
   children,
   varient = "regular",
+  size,
 }) => {
   return (
     <Block
-      width="60%"
+      width={size == undefined ? "60%" : size}
       display="flex"
       flexDirection="column"
       text-align="center"

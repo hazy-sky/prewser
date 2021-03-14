@@ -6,16 +6,20 @@ import React from "react";
 export const LongText = ({
   label,
   answers,
+  changeAnswers,
   id,
+  setAnswers,
 }: {
   label: string;
   answers?: any;
+  changeAnswers?: any;
+  setAnswers?: any;
   id?: any;
 }) => {
   // const {
   //   connectors: { drag },
   // } = useNode();
-  const [value, setValue] = React.useState("Hello");
+  const [value, setValue] = React.useState("");
 
   return (
     <Block
@@ -29,8 +33,12 @@ export const LongText = ({
       <Label3 $style={{ marginBottom: "10px" }}>{label}</Label3>
       <Textarea
         value={value}
-        onChange={(e) => setValue((e.target as TextareaProps).value as string)}
-        placeholder="Controlled Input"
+        onChange={(e) => {
+          setValue((e.target as TextareaProps).value as string);
+          let nanswers = { ...answers };
+          nanswers[id] = (e.target as TextareaProps).value as string;
+          setAnswers({ ...nanswers });
+        }}
         clearOnEscape
       />
     </Block>

@@ -7,10 +7,12 @@ export const ShortText = ({
   label,
   answers,
   id,
+  setAnswers,
 }: {
   label: any;
   answers?: any;
   id?: any;
+  setAnswers?: any;
 }) => {
   // const {
   //   connectors: { drag },
@@ -30,7 +32,13 @@ export const ShortText = ({
       margin="0 auto"
     >
       <FormControl label={() => label} error={() => ""} caption={() => ""}>
-        <Input />
+        <Input
+          onChange={(e) => {
+            let nanswers = { ...answers };
+            nanswers[id] = (e.target as any).value as string;
+            setAnswers({ ...nanswers });
+          }}
+        />
       </FormControl>
     </Block>
   );

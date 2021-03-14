@@ -25,11 +25,13 @@ export const Email = ({
   label,
   defaults,
   answers,
+  setAnswers,
   id,
 }: {
   label: string;
   defaults: string;
   answers?: any;
+  setAnswers?: any;
   id?: any;
 }) => {
   // const {
@@ -44,7 +46,11 @@ export const Email = ({
     const { value } = event.currentTarget;
     setIsValid(validateEmail(value));
     setValue(value);
+    let nanswers = { ...answers };
+    nanswers[id] = value;
+    setAnswers({ ...nanswers });
   };
+
   return (
     <Block
       // ref={drag}

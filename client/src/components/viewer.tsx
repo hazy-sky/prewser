@@ -10,10 +10,15 @@ import { Label1 } from "baseui/typography";
 
 interface ViewerProps {
   state: Array<any>;
-  answers: Array<any>;
+  answers: any;
+  setAnswers: any;
 }
 
-export const Viewer: React.FC<ViewerProps> = ({ state, answers }) => {
+export const Viewer: React.FC<ViewerProps> = ({
+  state,
+  answers,
+  setAnswers,
+}) => {
   const getComp = (
     type: string,
     label: string,
@@ -23,14 +28,49 @@ export const Viewer: React.FC<ViewerProps> = ({ state, answers }) => {
   ) => {
     const compsIds: any = {
       "Multiple Choices": (
-        <MultipleChoice label={label} extra={extra} answers={answers} />
+        <MultipleChoice
+          id={id}
+          setAnswers={setAnswers}
+          label={label}
+          extra={extra}
+          answers={answers}
+        />
       ),
-      "Short Text": <ShortText id={id} label={label} answers={answers} />,
-      "Long Text": <LongText id={id} label={label} answers={answers} />,
-      Code: <Code id={id} extra={extra} answers={answers} />,
-      Statement: <PlainText id={id} label={label} answers={answers} />,
+      "Short Text": (
+        <ShortText
+          id={id}
+          label={label}
+          setAnswers={setAnswers}
+          answers={answers}
+        />
+      ),
+      "Long Text": (
+        <LongText
+          id={id}
+          setAnswers={setAnswers}
+          label={label}
+          answers={answers}
+        />
+      ),
+      Code: (
+        <Code id={id} extra={extra} setAnswers={setAnswers} answers={answers} />
+      ),
+      Statement: (
+        <PlainText
+          id={id}
+          setAnswers={setAnswers}
+          label={label}
+          answers={answers}
+        />
+      ),
       Email: (
-        <Email id={id} label={label} defaults={defaults} answers={answers} />
+        <Email
+          id={id}
+          label={label}
+          setAnswers={setAnswers}
+          defaults={defaults}
+          answers={answers}
+        />
       ),
     };
     return compsIds[type];

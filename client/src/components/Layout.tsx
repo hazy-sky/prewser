@@ -4,13 +4,16 @@ import { Wrapper } from "./Wrapper";
 
 interface LayoutProps {
   varient?: "small" | "large";
+  size?: any;
 }
 
-export const Layout: React.FC<{}> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, size }) => {
   return (
     <>
       <NavBar />
-      <Wrapper varient={"small"}>{children}</Wrapper>
+      <Wrapper size={size} varient={"small"}>
+        {children}
+      </Wrapper>
     </>
   );
 };
